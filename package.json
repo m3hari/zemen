@@ -1,0 +1,22 @@
+{
+  "name": "zemen",
+  "version": "1.0.0",
+  "description": "Ethiopian calender library",
+  "main": "index.js",
+  "devDependencies": {
+    "jest": "^20.0.4"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "verbose": true
+  },
+  "keywords": [
+    "date",
+    "calender",
+    "ethiopia"
+  ],
+  "author": "m3hari",
+  "license": "MIT"
+}
