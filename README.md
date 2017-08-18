@@ -1,11 +1,12 @@
-# Zemenjs
+# Zemen
+### Ethiopian Calender library.
 
 ![Under Development](https://img.shields.io/badge/under-development-orange.svg)
 [![MIT](https://img.shields.io/packagist/l/doctrine/orm.svg?maxAge=2592000)](LICENCE.md)
 [![Build Status](https://travis-ci.org/m3hari/zemen.svg?branch=master)](https://travis-ci.org/m3hari/zemen)
 
-### Ethiopian Calender library.
-
+### Based on Beyene-Kudlek algorithm  Algorithm 
+#### http://www.geez.org/Calendars/
 
 ## API
 ```
@@ -52,8 +53,6 @@ Zemen.toGC(2009,12,12)      // 2017-08-18
 
 ```
 
-# Based on Beyene-Kudlek algorithm  Algorithm 
-### http://www.geez.org/Calendars/
 
 
 ### Plans
