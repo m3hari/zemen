@@ -9,13 +9,11 @@
 
 ## API
 ```
-Zemen.toEC()
-
 
 /**
 * Converts a Ethiopian date to Gregorian and returns Date instance representing Gregorian Date.
-* @param { String | Number  } val - A numeric year value if the second and third parameters are provided,
-                                It should be a date string if not  
+* @param { String | Number  } val - A numeric year value if second and third parameters are provided,
+                             It should be a date string if not. 
 * @param { Number } month A zero-based numeric value for the month (0 for January, 11 for December)
 * @param { Number } day A numeric value equal for the day of the month.
 */
@@ -25,8 +23,8 @@ toGC(val, month, day)
 
 /**
 * Converts a Gregorian date to Ethiopian and returns Zemen instance representing Ethiopian Date.
-* @param { String | Number | Date } val - A numeric year value if the second and third parameters ar provided,
-*                                         It should be  either a date string or a Date object if not  
+* @param { String | Number | Date } val - A numeric year value if second and third parameters are provided,
+*                                   It should be  either a date string or a Date object if not.  
 * @param { Number } month A zero-based numeric value for the month (0 for January, 11 for December)
 * @param { Number } day A numeric value equal for the day of the month.
 */
@@ -54,7 +52,8 @@ Zemen.toGC(2009,12,12)      // 2017-08-18
 
 ```
 
-# Based on Beyene-Kudlek algorithm  Algorithm http://www.geez.org/Calendars/
+# Based on Beyene-Kudlek algorithm  Algorithm 
+### http://www.geez.org/Calendars/
 
 
 ### Plans
