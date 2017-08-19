@@ -33,9 +33,15 @@ toEC(val, month, day)
 
 ```
 
+## Installation
+
+```bash
+$ npm install zemen
+```
+
 ## Usage
 ```js
-const zemen  = require('zemen');
+const Zemen  = require('zemen');
 
 let zare = Zemen.toEC(new Date());
 zare.toString() // '2009-12-12'
