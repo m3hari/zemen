@@ -5,7 +5,7 @@
 [![MIT](https://img.shields.io/packagist/l/doctrine/orm.svg?maxAge=2592000)](LICENCE.md)
 [![Build Status](https://travis-ci.org/m3hari/zemen.svg?branch=master)](https://travis-ci.org/m3hari/zemen)
 
-### Based on Beyene-Kudlek algorithm  Algorithm 
+### Based On Beyene-Kudlek  Algorithm 
 #### http://www.geez.org/Calendars/
 
 ## API
