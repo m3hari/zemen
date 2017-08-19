@@ -1,8 +1,8 @@
 {
   "name": "zemen",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Ethiopian calender library",
-  "main": "index.js",
+  "main": "zemen.js",
   "devDependencies": {
     "jest": "^20.0.4"
   },
