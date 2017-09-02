@@ -8,54 +8,32 @@
 ### Based On Beyene-Kudlek  Algorithm 
 #### http://www.geez.org/Calendars/
 
-## API
-```
-
-/**
-* Converts a Ethiopian date to Gregorian and returns Date instance representing Gregorian Date.
-* @param { String | Number  } val - A numeric year value if second and third parameters are provided,
-                             It should be a date string if not. 
-* @param { Number } month A zero-based numeric value for the month (0 for January, 11 for December)
-* @param { Number } day A numeric value equal for the day of the month.
-*/
-
-toGC(val, month, day)
-
-
-/**
-* Converts a Gregorian date to Ethiopian and returns Zemen instance representing Ethiopian Date.
-* @param { String | Number | Date } val - A numeric year value if second and third parameters are provided,
-*                                   It should be  either a date string or a Date object if not.  
-* @param { Number } month A zero-based numeric value for the month (0 for January, 11 for December)
-* @param { Number } day A numeric value equal for the day of the month.
-*/
-toEC(val, month, day)
-
-```
-
 ## Installation
 
 ```bash
-$ npm install zemen
+$ npm install --save zemen  
 ```
 
 ## Usage
 ```js
 const Zemen  = require('zemen');
 
-let zare = Zemen.toEC(new Date());
-zare.toString() // '2009-12-12'
-zare.format()   // ዓርብ,ነሐሴ 12 2009 ዓ.ም
-
-let zare = Zemen.toEC("2017-08-18");
-zare.toString() // '2009-12-12'
-
-let zare = Zemen.toEC(2017,8,18);
-zare.toString() // '2009-12-12'
+let zare = new Zemen();
+zare.toString()                         // '2009-12-27'
+zare.format('MMM-DD-YYYY')              //  ነሐሴ-27-2009
+zare.format('d ፣ MMM DD ቀን YYYY E')     //  ቅዳሜ ፣ ነሐሴ 27 ቀን 2009 ዓ.ም
 
 
-Zemen.toGC("2009-12-12")    // 2017-08-18
-Zemen.toGC(2009,12,12)      // 2017-08-18
+// TO Ethiopian
+Zemen.toEC("2017-09-02").toString()      // '2009-12-27'
+Zemen.toEC(2017,8,2).toString()          // '2009-12-17'
+Zemen.toEC(new Date()).toString()        // '2009-12-27'
+
+
+// TO Gregorian
+Zemen.toGC("2009-12-27").toDateString()     // Sat Sep 02 2017
+Zemen.toGC(2009,11,27).toDateString()       // Sat Sep 02 2017
+Zemen.toGC(new Zemen()).toDateString()      // Sat Sep 02 2017
 
 ```
 

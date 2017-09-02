@@ -158,8 +158,8 @@ describe('Zemen Formating', () => {
             });
         })();
         (function () {
-            let pattern = 'd ፣ MMM DD ቀን YYYY';
-            let expected = 'ቅዳሜ ፣ ነሐሴ 27 ቀን 2009';
+            let pattern = 'd ፣ MMM DD ቀን YYYY E';
+            let expected = 'ቅዳሜ ፣ ነሐሴ 27 ቀን 2009 ዓ.ም';
             it(`${pattern} should format ${zare.toString()} as ${expected}`, () => {
                 let actual = zare.format(pattern);
                 expect(actual).toEqual(expected);
