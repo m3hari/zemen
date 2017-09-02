@@ -1,5 +1,5 @@
 const Zemen = require('../zemen');
-let zare = Zemen.toEC(new Date());
+let zare = new Zemen();
 describe('Zemen Formating', () => {
     describe('Default & ISO8601', () => {
         (function () {
