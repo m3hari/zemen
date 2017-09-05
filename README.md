@@ -4,7 +4,6 @@
 ![Under Development](https://img.shields.io/badge/under-development-orange.svg)
 [![MIT](https://img.shields.io/packagist/l/doctrine/orm.svg?maxAge=2592000)](LICENCE.md)
 [![Build Status](https://travis-ci.org/m3hari/zemen.svg?branch=master)](https://travis-ci.org/m3hari/zemen)
-
 [![Coverage Status](https://coveralls.io/repos/github/m3hari/zemen/badge.svg?branch=develop)](https://coveralls.io/github/m3hari/zemen?branch=master)
 
 
