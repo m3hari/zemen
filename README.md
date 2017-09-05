@@ -43,7 +43,7 @@ Zemen.toGC(new Zemen()).toDateString()      // Sat Sep 02 2017
 
 ### Plans
 - [x] More formating
-- [ ] Support the browser
+- [x] Support the browser
 - [x] Publish on npm
 - [ ] Support for time and timezone
 - [ ] playground github page
