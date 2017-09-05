@@ -4,10 +4,12 @@
   "description": "Ethiopian calender library",
   "main": "zemen.js",
   "devDependencies": {
+    "coveralls": "^2.13.1",
     "jest": "^20.0.4"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --coverage",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
   "jest": {
     "verbose": true

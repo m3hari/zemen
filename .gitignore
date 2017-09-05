@@ -30,3 +30,9 @@ typings/
 
 # dotenv environment variables file
 .env
+
+#coverge report
+coverage/
+.coveralls.yml
+
+package-lock.json
