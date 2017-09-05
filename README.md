@@ -42,13 +42,14 @@ Zemen.toGC(new Zemen()).toDateString()      // Sat Sep 02 2017
 
 
 ### Plans
-- [ ] more formating
-- [ ] support the browser
-- [ ] publish on npm
-- [ ] support for time and time zone related thing
+- [x] More formating
+- [ ] Support the browser
+- [x] Publish on npm
+- [ ] Support for time and timezone
 - [ ] playground github page
-- [ ] date picker
-- [ ] ng wrapper
+- [ ] Date picker
+- [ ] Date utilities
+- [ ] Angular wrapper
 - [ ] . . .
 
 ## Contributing
