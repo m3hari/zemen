@@ -1,6 +1,6 @@
 {
   "name": "zemen",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Ethiopian calender library",
   "main": "zemen.js",
   "devDependencies": {
@@ -13,7 +13,7 @@
     "webpack": "^3.5.5"
   },
   "scripts": {
-    "build": "webpack -p",
+    "build": "./node_modules/.bin/webpack",
     "test": "jest --coverage",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
