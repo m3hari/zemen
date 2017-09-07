@@ -165,7 +165,7 @@ function testToGregorian(testCaseIndex) {
     it(`should  convert ${ecDate} E.C to ${gcDate} G.C`, () => {
         let query;
         if (ecDate.length === 5) {
-            query = [ecDate[1], ecDate[2], ecDate[3],ecDate[4]];
+            query = [ecDate[1], ecDate[2], ecDate[3], ecDate[4]];
         } else {
             query = [ecDate[1], ecDate[2], ecDate[3], JD_EPOCH_OFFSET_AMETE_MIHRET];
         }
@@ -188,7 +188,7 @@ function testToEthiopian(testCaseIndex) {
 }
 
 describe('Zemen', () => {
-  
+
     describe('Converting Gregorian date to Ethiopian date', () => {
         for (let i = 0; i < EthiopicDays.length; i++) {
             testToEthiopian(i);
@@ -198,5 +198,27 @@ describe('Zemen', () => {
         for (let i = 0; i < GregorianDays.length; i++) {
             testToGregorian(i);
         }
+    });
+    describe('Exceptions', () => {
+        it('Converting Invalid Ethiopina date to Gregorian date Should throw Invalid Ethiopian Date Exception', () => {
+            expect(() => { zemen.toGC([2009, 9, -1]); }).toThrow();
+            expect(() => { zemen.toGC([2009, -2, 32]); }).toThrow();
+            expect(() => { zemen.toGC([2009, 14, 1]); }).toThrow();
+            expect(() => { zemen.toGC([2009, 9, 31]); }).toThrow();
+        });
+        it('Converting Invalid Gregorian date to Ethiopian date Should throw Invalid Gregorian Date Exception', () => {
+            expect(() => { zemen.toEC([2009, 13, -1]); }).toThrow();
+            expect(() => { zemen.toEC([2009, -2, 32]); }).toThrow();
+            expect(() => { zemen.toEC([2009, 14, 15]); }).toThrow();
+            expect(() => { zemen.toEC([2009, 9, 32]); }).toThrow();
+        });
+        it('toGC should throw error if invalid era passed', () => {
+            expect(() => { zemen.toGC([2009, 10, 10, 25]); }).toThrow();
+        });
+        it('toGC should support AMETE_ALEM dates', () => {
+            let res = zemen.toGC([-500, 10, 10]);
+            console.log('res:', res);
+            expect(Array.isArray(res)).toBe(true);
+        });
     });
 });

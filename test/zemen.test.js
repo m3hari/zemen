@@ -38,8 +38,21 @@ describe('Zemen Public API', () => {
                 expect(zare.toString()).toBe(expected);
             })
         })();
-    })
 
+        (function () {
+            it('Should throw Invalid Argument Exception for  argumets length greater than 3', () => {
+                expect(() => { new Zemen(2009, 5, 15, 15); }).toThrow();
+            });
+            it('Should throw Invalid Argument Exception for invalid argument type', () => {
+                expect(() => { new Zemen(null); }).toThrow();
+                expect(() => { new Zemen(undefined); }).toThrow();
+                expect(() => { new Zemen({}); }).toThrow();
+                expect(() => { new Zemen(new Error('invalid')); }).toThrow();
+                expect(() => { new Zemen(2009); }).toThrow();
+            });
+
+        })();
+    })
     describe('Zemen.toEC', () => {
         (function () {
             it('toEC() Should Convert  gc date String to Ethiopian Date (Zemen Object)', () => {
@@ -59,6 +72,20 @@ describe('Zemen Public API', () => {
             it('toEC() Should Convert  gc date Number to Ethiopian Date (Zemen Object)', () => {
                 let zare = "2009-12-27";
                 expect(Zemen.toEC(2017, 8, 2).toString()).toEqual(zare);
+            })
+        })();
+
+        (function () {
+            it('toEC() Should throw Invalid Argument Exception for  argumets length greater than 3', () => {
+                expect(() => { Zemen.toEC(2009, 5, 15, 15); }).toThrow();
+            });
+        })();
+
+        (function () {
+            it('toEC() Should throw Invalid Argument Exception for invalid argument type', () => {
+                expect(() => { Zemen.toEC(null) }).toThrow();
+                expect(() => { Zemen.toEC(undefined); }).toThrow();
+                expect(() => { Zemen.toEC({}); }).toThrow();
             })
         })();
 
@@ -84,21 +111,50 @@ describe('Zemen Public API', () => {
                 expect(Zemen.toGC(2009, 11, 27).toDateString()).toBe(today);
             })
         })();
+        (function () {
+            it('toGC() Should throw Invalid Argument Exception for  argumets length greater than 3', () => {
+                expect(() => { Zemen.toGC(2009, 5, 15, 15) }).toThrow();
+            });
+        })();
 
-    });
-
-
-
-    describe('Mixed', () => {
-        // (function () {
-        //     it('Should Conver form  Zemen Object to Date  Object and vice versa', () => {
-        //         let now = new Date();
-        //         let ahun = new Zemen(now);
-        //         expect(Zemen.toEC(now).toString()).toEqual(ahun.toString());
-        //         // expect(Zemen.toGC(ahun).toDateString()).toEqual(now.toDateString());
-        //     })
-        // })();
+        (function () {
+            it('toGC() Should throw Invalid Argument Exception for invalid argument type', () => {
+                expect(() => { Zemen.toGC(null); }).toThrow();
+                expect(() => { Zemen.toGC(undefined); }).toThrow();
+                expect(() => { Zemen.toGC({}); }).toThrow();
+            })
+        })();
     })
-
+    describe('Zemen parse', () => {
+        (function () {
+            it('should parse string with no pattern using the default pattern', () => {
+                let date = Zemen.parse('2010-01-01');
+                expect(date).toBeInstanceOf(Zemen);
+                expect(date.getFullYear()).toBe(2010);
+                expect(date.getMonth()).toBe(0);
+                expect(date.getDate()).toBe(1);
+            });
+        })();
+        (function () {
+            it('should return empty string for undefined datestring', () => {
+                let res1 = Zemen.parse();
+                let res2 = Zemen.parse(null);
+                let res3 = Zemen.parse(undefined);
+                expect(res1).toBe("");
+                expect(res2).toBe("");
+                expect(res3).toBe("");
+            })
+        })();
+        (function () {
+            it('should throw ParseException for invalid pattern', () => {
+                expect(() => { Zemen.parse('2010-01-01-0669--'); }).toThrow();
+            })
+        })();
+        (function () {
+            it('should throw Notimplemented Exception for Unsported pattern', () => {
+                expect(() => { Zemen.parse('2010/01/01','DDDD'); }).toThrow();
+            })
+        })()
+    });
 
 })
