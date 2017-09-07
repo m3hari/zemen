@@ -1,5 +1,9 @@
 const Zemen = require('../zemen');
+const Formatter = require('../lib/formating');
+
 let zare = new Zemen('2009-12-27');
+let day2 = new Zemen('2009-1-1');
+
 describe('Zemen Formating', () => {
     describe('Default & ISO8601', () => {
         (function () {
@@ -60,6 +64,14 @@ describe('Zemen Formating', () => {
                 expect(actual).toEqual(expected);
             });
         })();
+        (function () {
+            let pattern = 'YY';
+            let expected = '09';
+            it(`${pattern} should format ${day2.toString()} as ${expected}`, () => {
+                let actual = day2.format(pattern);
+                expect(actual).toEqual(expected);
+            });
+        })();
     });
 
     describe('Month Patterns', () => {
@@ -100,6 +112,14 @@ describe('Zemen Formating', () => {
             let expected = 'ነሐሴ12';
             it(`${pattern} should format ${zare.toString()} as ${expected}`, () => {
                 let actual = zare.format(pattern);
+                expect(actual).toEqual(expected);
+            });
+        })();
+        (function () {
+            let pattern = 'MM';
+            let expected = '01';
+            it(`${pattern} should format ${day2.toString()} as ${expected}`, () => {
+                let actual = day2.format(pattern);
                 expect(actual).toEqual(expected);
             });
         })();
@@ -146,6 +166,14 @@ describe('Zemen Formating', () => {
                 expect(actual).toEqual(expected);
             });
         })();
+        (function () {
+            let pattern = 'DD';
+            let expected = '01';
+            it(`${pattern} should format ${day2.toString()} as ${expected}`, () => {
+                let actual = day2.format(pattern);
+                expect(actual).toEqual(expected);
+            });
+        })();
     });
 
     describe('Mixed', () => {
@@ -165,6 +193,21 @@ describe('Zemen Formating', () => {
                 expect(actual).toEqual(expected);
             });
         })();
+        (function () {
+            let pattern = 'e';
+            let expected = '6';
+            it(`${pattern} should format ${zare.toString()} as ${expected}`, () => {
+                let actual = zare.format(pattern);
+                expect(actual).toEqual(expected);
+            });
+        })();
+    })
+
+    describe('Exceptions', () => {
+        it(`Formatter should return empty string if date is  undefined `, () => {
+            let actual = Formatter.format(null);
+            expect(actual).toBe("");
+        });
     })
 
 });
