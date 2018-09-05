@@ -34,5 +34,3 @@ typings/
 #coverge report
 coverage/
 .coveralls.yml
-
-package-lock.json
