@@ -72,7 +72,7 @@ const JD_EPOCH_OFFSET_AMETE_MIHRET = 1723856; //    ዓ/ም
 const zemen = require('../lib/ conversion');
 
 
-let EthiopicDays = [
+const EthiopicDays = [
     // Dates from "Emporer Theodore..."
     // ETHIOPIC      //     GREGORIAN
     [2401443, 1855, 2, 20], //  [1862, 10, 29]
@@ -114,7 +114,7 @@ let EthiopicDays = [
 ];
 
 
-let GregorianDays = [
+const GregorianDays = [
     // Dates from "Emporer Theodore..."
     // GREGORIAN      //     ETHIOPIC
     [2401443, 1862, 10, 29], //  [1855,  2, 20]
@@ -159,8 +159,8 @@ let GregorianDays = [
 
 
 function testToGregorian(testCaseIndex) {
-    let ecDate = EthiopicDays[testCaseIndex];
-    let gcDate = GregorianDays[testCaseIndex];
+    const ecDate = EthiopicDays[testCaseIndex];
+    const gcDate = GregorianDays[testCaseIndex];
 
     it(`should  convert ${ecDate} E.C to ${gcDate} G.C`, () => {
         let query;
@@ -169,20 +169,20 @@ function testToGregorian(testCaseIndex) {
         } else {
             query = [ecDate[1], ecDate[2], ecDate[3], JD_EPOCH_OFFSET_AMETE_MIHRET];
         }
-        let expected = [gcDate[1], gcDate[2], gcDate[3]];
-        let actual = zemen.toGC(query);
+        const expected = [gcDate[1], gcDate[2], gcDate[3]];
+        const actual = zemen.toGC(query);
         expect(actual).toEqual(expected);
     });
 }
 
 function testToEthiopian(testCaseIndex) {
-    let gcDate = GregorianDays[testCaseIndex];
-    let ecDate = EthiopicDays[testCaseIndex];
+    const gcDate = GregorianDays[testCaseIndex];
+    const ecDate = EthiopicDays[testCaseIndex];
 
     it(`should  convert ${gcDate} G.C to ${ecDate} E.C`, () => {
-        let query = [gcDate[1], gcDate[2], gcDate[3]];
-        let expected = [ecDate[1], ecDate[2], ecDate[3]];
-        let actual = zemen.toEC(query);
+        const query = [gcDate[1], gcDate[2], gcDate[3]];
+        const expected = [ecDate[1], ecDate[2], ecDate[3]];
+        const actual = zemen.toEC(query);
         expect(actual).toEqual(expected);
     });
 }
@@ -190,12 +190,12 @@ function testToEthiopian(testCaseIndex) {
 describe('Zemen', () => {
 
     describe('Converting Gregorian date to Ethiopian date', () => {
-        for (let i = 0; i < EthiopicDays.length; i++) {
+        for (let i = 0; i < EthiopicDays.length; i += 1) {
             testToEthiopian(i);
         }
     });
     describe('Converting Ethiopian date to Gregorian date', () => {
-        for (let i = 0; i < GregorianDays.length; i++) {
+        for (let i = 0; i < GregorianDays.length; i += 1) {
             testToGregorian(i);
         }
     });
@@ -216,8 +216,7 @@ describe('Zemen', () => {
             expect(() => { zemen.toGC([2009, 10, 10, 25]); }).toThrow();
         });
         it('toGC should support AMETE_ALEM dates', () => {
-            let res = zemen.toGC([-500, 10, 10]);
-            console.log('res:', res);
+            const res = zemen.toGC([-500, 10, 10]);
             expect(Array.isArray(res)).toBe(true);
         });
     });
