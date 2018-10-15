@@ -14,14 +14,15 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "jest": "^20.0.4",
+    "jest-cli": "^23.6.0",
+    "npx": "^10.2.0",
     "webpack": "^3.5.5"
   },
   "scripts": {
-    "build": "./node_modules/.bin/webpack",
-    "test": "jest --coverage",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
-    "lint": "node node_modules/eslint/bin/eslint --fix ."
+    "lint": "npx eslint --fix .",
+    "test": "npx jest --verbose --coverage",
+    "build": "npx webpack",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
   "jest": {
     "verbose": true
