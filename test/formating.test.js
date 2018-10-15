@@ -1,5 +1,5 @@
 const Zemen = require("../zemen");
-const Formatter = require("../lib/formating");
+const Formatter = require("../src/formating");
 
 const zare = new Zemen("2009-12-27");
 const day2 = new Zemen("2009-1-1");

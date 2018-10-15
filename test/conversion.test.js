@@ -69,7 +69,7 @@ const JD_EPOCH_OFFSET_AMETE_MIHRET = 1723856; //    ዓ/ም
  * 22/03/5993    31/12/6000    3912880
  */
 
-const zemen = require('../lib/ conversion');
+const zemen = require('../src/ conversion');
 
 
 const EthiopicDays = [
