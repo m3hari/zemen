@@ -7,11 +7,7 @@ declare class Zemen {
 
     static toGC(val: ZemenDateValue, month?: number, day?: number): Date;
 
-    static toEC(val: ZemenDateValue, month?: number, day?: number): Date;
-
-    static parse<T>(dateString: string, pattern: string): T | void;
-
-    format<T>(pattern: string): T | void;
+    static toEC(val: ZemenDateValue, month?: number, day?: number): Zemen;
 }
 
 export = Zemen;
