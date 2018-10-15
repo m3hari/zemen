@@ -1,6 +1,6 @@
 module.exports = {
   output: {
-    library: 'zemen.min.js',
+    library: 'Zemen',
     libraryTarget: 'umd'
   },
   module: {
