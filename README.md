@@ -3,8 +3,14 @@
 
 ![Under Development](https://img.shields.io/badge/under-development-orange.svg)
 [![MIT](https://img.shields.io/packagist/l/doctrine/orm.svg?maxAge=2592000)](LICENCE.md)
+
 [![Build Status](https://travis-ci.org/m3hari/zemen.svg?branch=master)](https://travis-ci.org/m3hari/zemen)
+
 [![Coverage Status](https://coveralls.io/repos/github/m3hari/zemen/badge.svg?branch=develop)](https://coveralls.io/github/m3hari/zemen?branch=master)
+
+[![gzip](https://img.badgesize.io/m3hari/zemen/master/dist/zemen.min.js?compression=gzip)](https://img.badgesize.io/m3hari/zemen/master/dist/zemen.min.js?compression=gzip)
+
+
 
 
 ### Based On Beyene-Kudlek  Algorithm 
@@ -45,12 +51,10 @@ Zemen.toGC(new Zemen()).toDateString()      // Sat Sep 02 2017
 - [x] More formating
 - [x] Support the browser
 - [x] Publish on npm
-- [ ] Support for time and timezone
 - [ ] playground github page
 - [ ] Date picker
 - [ ] Date utilities
-- [ ] Angular wrapper
-- [ ] . . .
+- [ ] vue,angular,react wrapper
 
 ## Contributing
 1. Fork it!
