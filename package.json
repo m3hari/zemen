@@ -19,6 +19,9 @@
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2"
   },
+  "resolutions": {
+    "babel-core": "7.0.0-bridge.0"
+  },
   "scripts": {
     "dev": "npx rimraf dist && npx webpack  --mode development",
     "lint": "npx eslint --fix .",
