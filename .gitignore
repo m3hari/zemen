@@ -38,4 +38,4 @@ coverage/
 .coveralls.yml
 
 # build
-dist
+dist/

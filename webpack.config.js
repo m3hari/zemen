@@ -1,4 +1,8 @@
 module.exports = {
+  output: {
+    library: 'zemen.min.js',
+    libraryTarget: 'umd'
+  },
   module: {
     rules: [
       {
