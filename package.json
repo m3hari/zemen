@@ -3,6 +3,7 @@
   "version": "0.0.6",
   "description": "Ethiopian calender library",
   "main": "zemen.js",
+  "types": "./lib/index.d.ts",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
