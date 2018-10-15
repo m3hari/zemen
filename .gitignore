@@ -36,3 +36,6 @@ typings/
 #coverge report
 coverage/
 .coveralls.yml
+
+# build
+dist

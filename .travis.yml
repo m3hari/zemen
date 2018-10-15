@@ -1,6 +1,11 @@
 language: node_js
 node_js:
-  - "7"
+  - "10.0"
+
+script:
+  - npm run lint
+  - npm test
+
 after_success: 
   - 'npm run coveralls'
   - 'npm run build'
