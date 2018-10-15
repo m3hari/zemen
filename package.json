@@ -1,6 +1,6 @@
 {
   "name": "zemen",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Ethiopian calender library",
   "main": "zemen.js",
   "types": "./src/index.d.ts",
