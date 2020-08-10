@@ -1,42 +1,26 @@
 {
   "name": "zemen",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "description": "Ethiopian calender library",
-  "main": "zemen.js",
-  "types": "./src/index.d.ts",
-  "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "babel-loader": "^8.0.4",
-    "coveralls": "^2.13.1",
-    "eslint": "^5.6.1",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-config-prettier": "^3.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "jest-cli": "^23.6.0",
-    "npx": "^10.2.0",
-    "rimraf": "^2.6.2",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2"
-  },
-  "resolutions": {
-    "babel-core": "7.0.0-bridge.0"
-  },
+  "main": "src/index.ts",
+  "repository": "https://github.com/m3hari/zemen.git",
   "scripts": {
-    "dev": "npx rimraf dist && npx webpack  --mode development",
-    "lint": "npx eslint --fix .",
-    "test": "npx jest --verbose --coverage",
-    "build": "npx rimraf dist && npx webpack --progress --mode production --output ./dist/zemen.min.js",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+    "build": "esbuild ./src/zemen.ts --bundle --outfile=./dist/zemen.min.js",
+    "test": "jest"
   },
-  "jest": {
-    "verbose": true
+  "devDependencies": {
+    "@types/jest": "26.x",
+    "esbuild": "0.x",
+    "jest": "26.x",
+    "ts-jest": "26.x",
+    "typescript": "^3.9.7"
   },
   "keywords": [
     "date",
     "calender",
-    "ethiopia"
+    "ethiopia",
+    "coptic"
   ],
-  "author": "m3hari",
+  "author": "Mehari Geta <gm3hari@gmail.com>",
   "license": "MIT"
 }
