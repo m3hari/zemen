@@ -1,17 +1,27 @@
+// Based on the book Calendrical Calculations https://en.wikipedia.org/wiki/Calendrical_Calculations
+
+/**
+ * RD : Rata Die
+ * Fixed date—elapsed days since the onset of Monday, January 1, 1 (Gregorian)
+ * https://en.wikipedia.org/wiki/Rata_Die
+ *  */
+
 const GEREGORIAN_EPOCH = 1;
 
-const ETHIOPIC_EPOCH = 2796; // Ethiopian yeah 1 E.E starts at 2796 rd
+const ETHIOPIC_EPOCH = 2796; // Ethiopian year 1 E.E starts at 2796 rd
 
 const COPTIC_EPOCH = 103605;
 
-export type Ken = {
+type RataDie = number;
+
+export type SimpleDate = {
   year: number;
   month: number;
   day: number;
 };
 
 // COPTIC
-export function fixedFromCoptic({ year, month, day }: Ken) {
+export function rdFromCoptic({ year, month, day }: SimpleDate): RataDie {
   return (
     COPTIC_EPOCH -
     1 +
@@ -22,25 +32,24 @@ export function fixedFromCoptic({ year, month, day }: Ken) {
   );
 }
 
-export function copticFromFixed(date: number): Ken {
+export function copticFromRd(date: number): SimpleDate {
   const year = Math.floor((1 / 1461) * (4 * (date - COPTIC_EPOCH) + 1463));
   const month =
-    Math.floor(
-      (1 / 30) * (date - fixedFromCoptic({ year, month: 1, day: 1 }))
-    ) + 1;
+    Math.floor((1 / 30) * (date - rdFromCoptic({ year, month: 1, day: 1 }))) +
+    1;
 
-  const day = date + 1 - fixedFromCoptic({ year, month, day: 1 });
+  const day = date + 1 - rdFromCoptic({ year, month, day: 1 });
 
   return { year, month, day };
 }
 
 // ETHIOPIC
-export function fixedFromEthiopic(ken: Ken) {
-  return ETHIOPIC_EPOCH + fixedFromCoptic(ken) - COPTIC_EPOCH;
+export function rdFromEthiopic(SimpleDate: SimpleDate): RataDie {
+  return ETHIOPIC_EPOCH + rdFromCoptic(SimpleDate) - COPTIC_EPOCH;
 }
 
-export function ethiopicFromFixed(date: number) {
-  return copticFromFixed(date + COPTIC_EPOCH - ETHIOPIC_EPOCH);
+export function ethiopicFromRd(date: number): SimpleDate {
+  return copticFromRd(date + COPTIC_EPOCH - ETHIOPIC_EPOCH);
 }
 
 // GEREGORIAN
@@ -49,7 +58,7 @@ function isGeregorianLeapYear(year: number) {
   return year % 4 === 0 && ![100, 200, 300].includes(year % 400);
 }
 
-export function fixedFromGeregorian({ year, month, day }: Ken) {
+export function rdFromGeregorian({ year, month, day }: SimpleDate): RataDie {
   const step1 =
     GEREGORIAN_EPOCH -
     1 +
@@ -66,7 +75,7 @@ export function fixedFromGeregorian({ year, month, day }: Ken) {
 }
 
 function gregorianNewYear(year: number) {
-  return fixedFromGeregorian({ year, month: 1, day: 1 });
+  return rdFromGeregorian({ year, month: 1, day: 1 });
 }
 
 function geregorianYear(date: number) {
@@ -85,18 +94,18 @@ function geregorianYear(date: number) {
   return n100 === 4 || n1 === 4 ? year : year + 1;
 }
 
-export function geregorianFromFixed(date: number) {
+export function geregorianFromRd(date: number): SimpleDate {
   const year = geregorianYear(date);
   const priorDays = date - gregorianNewYear(year);
   const correction =
-    date < fixedFromGeregorian({ year, month: 3, day: 1 }) // year,march,1
+    date < rdFromGeregorian({ year, month: 3, day: 1 }) // year,march,1
       ? 0
       : isGeregorianLeapYear(year)
       ? 1
       : 2;
   const month = Math.floor((1 / 367) * (12 * (priorDays + correction) + 373));
 
-  const day = date - fixedFromGeregorian({ year, month, day: 1 }) + 1;
+  const day = date - rdFromGeregorian({ year, month, day: 1 }) + 1;
 
   return { year, month, day };
 }

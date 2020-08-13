@@ -1,10 +1,10 @@
 import {
-  copticFromFixed,
-  geregorianFromFixed,
-  fixedFromCoptic,
-  ethiopicFromFixed,
-  fixedFromEthiopic,
-  fixedFromGeregorian,
+  copticFromRd,
+  geregorianFromRd,
+  rdFromCoptic,
+  ethiopicFromRd,
+  rdFromEthiopic,
+  rdFromGeregorian,
 } from "./core";
 
 const testData = {
@@ -17,26 +17,26 @@ const testData = {
 describe("core", () => {
   describe("fixed to date", () => {
     it("should correctly change fixed dates to coptic", () => {
-      expect(copticFromFixed(testData.rd)).toEqual(testData.coptic);
+      expect(copticFromRd(testData.rd)).toEqual(testData.coptic);
     });
 
     it("should correctly change fixed dates to ethiopic", () => {
-      expect(ethiopicFromFixed(testData.rd)).toEqual(testData.ethiopic);
+      expect(ethiopicFromRd(testData.rd)).toEqual(testData.ethiopic);
     });
     it("should correctly change fixed dates to gregorian", () => {
-      expect(geregorianFromFixed(testData.rd)).toEqual(testData.gregorian);
+      expect(geregorianFromRd(testData.rd)).toEqual(testData.gregorian);
     });
   });
 
   describe("date to fixed", () => {
     it("should correctly change fixed dates to coptic", () => {
-      expect(fixedFromCoptic(testData.coptic)).toEqual(testData.rd);
+      expect(rdFromCoptic(testData.coptic)).toEqual(testData.rd);
     });
     it("should correctly change fixed dates to ethiopic", () => {
-      expect(fixedFromEthiopic(testData.ethiopic)).toEqual(testData.rd);
+      expect(rdFromEthiopic(testData.ethiopic)).toEqual(testData.rd);
     });
     it("should correctly change fixed dates to gregorian", () => {
-      expect(fixedFromGeregorian(testData.gregorian)).toEqual(testData.rd);
+      expect(rdFromGeregorian(testData.gregorian)).toEqual(testData.rd);
     });
   });
 });

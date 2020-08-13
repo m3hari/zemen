@@ -1,1 +1,1 @@
-export { toEE, toGC } from "./converting";
+export { ethiopicToGregorian, gregorianToEthiopic } from "./conversion";
