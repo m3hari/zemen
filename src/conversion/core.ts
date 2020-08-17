@@ -14,11 +14,7 @@ const COPTIC_EPOCH = 103605;
 
 type RataDie = number;
 
-export type SimpleDate = {
-  year: number;
-  month: number;
-  day: number;
-};
+import { SimpleDate } from "../@types/index";
 
 // COPTIC
 export function rdFromCoptic({ year, month, day }: SimpleDate): RataDie {
