@@ -11,8 +11,8 @@ describe("Formatting", () => {
   it("Month formatting works correctly", () => {
     expect(format({ year: 2012, month: 4, day: 6 }, "M")).toBe("4");
     expect(format({ year: 2012, month: 4, day: 6 }, "MM")).toBe("04");
-    expect(format({ year: 2012, month: 4, day: 6 }, "MMM")).toBe("ታኅሣ");
-    expect(format({ year: 2012, month: 4, day: 6 }, "MMMM")).toBe("ታኅሣሥ");
+    expect(format({ year: 2012, month: 4, day: 6 }, "MMM")).toBe("ታህሣ");
+    expect(format({ year: 2012, month: 4, day: 6 }, "MMMM")).toBe("ታህሣሥ");
   });
   it("Year formatting works correctly", () => {
     expect(format({ year: 2012, month: 3, day: 6 }, "YY")).toBe("12");

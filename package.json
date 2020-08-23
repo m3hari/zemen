@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "repository": "https://github.com/m3hari/zemen.git",
   "scripts": {
-    "build": "esbuild ./src/zemen.ts --bundle --outfile=./dist/zemen.min.js",
+    "build": "esbuild ./src/index.ts --bundle --outfile=./dist/zemen.min.js",
     "test": "jest"
   },
   "devDependencies": {

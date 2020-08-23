@@ -1,15 +1,16 @@
 import { SimpleDate } from "../@types/index";
 import { validateEthiopianDate } from "../util";
+import { getDayOfWeekFromRD, rdFromEthiopic } from "../conversion/core";
 
 // ISO 8601 Extended format `YYYY-MM-DDTHH:mm:ss.sssZ`
 const DEFAULT_FORMAT = `YYYY-MM-DD`;
 
-export const days = ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሓሙስ", "ዓርብ", "ቅዳሜ"];
+export const days = ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሐሙስ", "ዓርብ", "ቅዳሜ"];
 export const months = [
   "መስከረም",
   "ጥቅምት",
-  "ኅዳር",
-  "ታኅሣሥ",
+  "ህዳር",
+  "ታህሣሥ",
   "ጥር",
   "የካቲት",
   "መጋቢት",
@@ -31,6 +32,8 @@ const twoDigit = (num: number) => {
 export function format(date: SimpleDate, pattern = DEFAULT_FORMAT): string {
   validateEthiopianDate(date);
 
+  const weekDay = getDayOfWeekFromRD(rdFromEthiopic(date));
+
   const patterns = [
     ["YYYY", date.year], // 2012
     ["YY", twoDigit(date.year)], // 12
@@ -43,8 +46,8 @@ export function format(date: SimpleDate, pattern = DEFAULT_FORMAT): string {
     ["DD", twoDigit(date.day)], // 07
     ["D", date.day], // 7
 
-    // [ 'dd', date.year ], // ማክሰኞ
-    // [ 'd', date.year ], // ማክ
+    ["dd", days[weekDay]], // ማክሰኞ
+    ["d", daysShort[weekDay]], // ማክ
 
     ["e", "ዓ.ም"],
   ];

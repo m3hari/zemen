@@ -105,3 +105,9 @@ export function geregorianFromRd(date: number): SimpleDate {
 
   return { year, month, day };
 }
+
+export function getDayOfWeekFromRD(rd: RataDie) {
+  // R.D. 1 is a Monday, determining the day of the week amounts to taking the R.D. modulo 7
+  // 0 is Sunday, 1 is Monday
+  return rd % 7;
+}
