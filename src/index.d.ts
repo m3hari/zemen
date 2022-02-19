@@ -8,6 +8,24 @@ declare class Zemen {
     static toGC(val: ZemenDateValue, month?: number, day?: number): Date;
 
     static toEC(val: ZemenDateValue, month?: number, day?: number): Zemen;
+    
+    format(pattern: string): string;
+    
+    toString():string;
+    
+    getDate():number;
+    
+    getMonth(): number;
+    
+    getFullYear(): number;
+    
+    getMonthName(): string;
+    
+    getShortMonthName(): string;
+    
+    getDayOfWeek(): string;
+    
+    getGCWeekDay(): number;
 }
 
 export = Zemen;
