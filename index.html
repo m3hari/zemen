@@ -121,8 +121,8 @@
 <span class="text-sky-300">const</span> <span class="text-zinc-200">zare</span> <span class="text-zinc-500">=</span> <span class="text-sky-300">new</span> <span class="text-zinc-200">Zemen()</span><span class="text-zinc-500">;</span>              <span class="text-zinc-600">// today, in the Ethiopian calendar</span>
 <span class="text-zinc-200">zare.format(</span><span class="text-amber-200">'MMMM DD ቀን YYYY E'</span><span class="text-zinc-200">)</span><span class="text-zinc-500">;</span>  <span class="text-zinc-600">// 'ሐምሌ 04 ቀን 2018 ዓ.ም'</span>
 
-<span class="text-zinc-200">Zemen.toEC(</span><span class="text-amber-200">'2017-09-02'</span><span class="text-zinc-200">)</span><span class="text-zinc-500">;</span>           <span class="text-zinc-600">// Gregorian → Ethiopian</span>
-<span class="text-zinc-200">Zemen.toGC(</span><span class="text-amber-200">'2009-12-27'</span><span class="text-zinc-200">)</span><span class="text-zinc-500">;</span>           <span class="text-zinc-600">// Ethiopian → Gregorian</span></code></pre>
+<span class="text-zinc-200">Zemen.fromGregorian(</span><span class="text-amber-200">'2017-09-02'</span><span class="text-zinc-200">)</span><span class="text-zinc-500">;</span>      <span class="text-zinc-600">// Gregorian → Ethiopian</span>
+<span class="text-sky-300">new</span> <span class="text-zinc-200">Zemen(</span><span class="text-amber-200">'2009-12-27'</span><span class="text-zinc-200">).toGregorian()</span><span class="text-zinc-500">;</span>  <span class="text-zinc-600">// Ethiopian → Gregorian</span></code></pre>
     </section>
   </main>
 
@@ -144,7 +144,7 @@
       if (!v) return;
       try {
         const [y, m, d] = v.split("-").map(Number);
-        const ec = Zemen.toEC(y, m - 1, d);
+        const ec = Zemen.fromGregorian(y, m - 1, d);
         $("gc-out").textContent = ec.format("d ፣ MMMM DD ቀን YYYY E");
         $("gc-out-sub").textContent = ec.toString();
       } catch (err) {
@@ -160,7 +160,7 @@
     MONTHS.forEach((name, m) => $("ec-month").add(new Option(name, m)));
     const ecConvert = () => {
       try {
-        const gc = Zemen.toGC(+$("ec-year").value, +$("ec-month").value, +$("ec-day").value);
+        const gc = new Zemen(+$("ec-year").value, +$("ec-month").value, +$("ec-day").value).toGregorian();
         $("ec-out").textContent = gc.toDateString();
         $("ec-out-sub").textContent = gc.toLocaleDateString("en-CA");
       } catch (err) {

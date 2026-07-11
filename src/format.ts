@@ -3,10 +3,9 @@ export interface Formattable {
   getFullYear(): number;
   getMonth(): number;
   getDate(): number;
+  getDay(): number;
   getMonthName(): string;
-  getShortMonthName(): string;
   getDayOfWeek(): string;
-  getGCWeekDay(): number;
 }
 
 /** Two-digit zero-pad of `value % 100`. */
@@ -21,14 +20,14 @@ const TOKENS: [token: string, render: (date: Formattable) => string][] = [
   ["YY", (z) => pad2(z.getFullYear())],
   ["Y", (z) => `${z.getFullYear()}`],
   ["MMMM", (z) => z.getMonthName()],
-  ["MMM", (z) => z.getShortMonthName()],
+  ["MMM", (z) => z.getMonthName().slice(0, 3)],
   ["MM", (z) => pad2(z.getMonth() + 1)],
   ["M", (z) => `${z.getMonth() + 1}`],
   ["DDD", (z) => z.getDayOfWeek()],
   ["DD", (z) => pad2(z.getDate())],
   ["D", (z) => `${z.getDate()}`],
   ["d", (z) => z.getDayOfWeek()],
-  ["e", (z) => `${z.getGCWeekDay()}`],
+  ["e", (z) => `${z.getDay()}`],
   ["E", () => "ዓ.ም"],
 ];
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import Zemen from "../src/zemen";
-import { MONTH_NAMES, SHORT_MONTH_NAMES, WEEKDAY_NAMES } from "../src/names";
+import { MONTH_NAMES, WEEKDAY_NAMES } from "../src/names";
 
 describe("Zemen constructor", () => {
   it("no arguments → today", () => {
@@ -9,6 +9,7 @@ describe("Zemen constructor", () => {
 
   it("from an Ethiopian date string", () => {
     expect(new Zemen("2009-12-27").toString()).toBe("2009-12-27");
+    expect(new Zemen("007-08-09").toString()).toBe("7-8-9");
   });
 
   it("from (year, month, day) numbers — month is 0-based", () => {
@@ -21,11 +22,15 @@ describe("Zemen constructor", () => {
     expect(new Zemen("0x10", "2", "3").toString()).toBe("0-3-3"); // radix 10
   });
 
-  it("rejects arguments that coerce to NaN (B5)", () => {
+  it("rejects arguments that coerce to NaN", () => {
     expect(() => new Zemen("abc", 1, 2)).toThrow("Invalid Ethiopian Date");
     expect(() => new Zemen(2009, "ጳጉሜ", 1)).toThrow("Invalid Ethiopian Date");
-    expect(() => (Zemen as any).toEC(NaN, 8, 2)).toThrow("Invalid Gregorian Date");
-    expect(() => (Zemen as any).toGC(2009.7, 11, 27)).toThrow("Invalid Ethiopian Date");
+  });
+
+  it("throws ParsingError for malformed or empty strings", () => {
+    expect(() => new Zemen("")).toThrow("ParsingError: Can't parse ");
+    expect(() => new Zemen("2010-01-01-0669--")).toThrow("ParsingError: Can't parse 2010-01-01-0669--");
+    expect(() => new Zemen("2010/01/01")).toThrow("ParsingError: Can't parse 2010/01/01");
   });
 
   it("throws 'Invalid Argument Exception' for wrong arity or type", () => {
@@ -35,7 +40,7 @@ describe("Zemen constructor", () => {
       () => new (Zemen as any)(null),
       () => new (Zemen as any)(undefined),
       () => new (Zemen as any)({}),
-      () => new (Zemen as any)(new Error("x")),
+      () => new (Zemen as any)(new Date(2017, 8, 2)), // Gregorian input → fromGregorian
       () => new (Zemen as any)(2009),
       () => new (Zemen as any)(true),
     ]) {
@@ -43,149 +48,108 @@ describe("Zemen constructor", () => {
     }
   });
 
-  it("empty string throws ParsingError, not a TypeError (B8)", () => {
-    expect(() => new Zemen("")).toThrow("ParsingError: Can't parse ");
+  it("instances are immutable — no public fields to poke", () => {
+    const z = new Zemen(2009, 11, 27);
+    expect((z as any).year).toBeUndefined();
+    expect((z as any).month).toBeUndefined();
+    expect((z as any).date).toBeUndefined();
+    expect((z as any).gc).toBeUndefined();
+    (z as any).year = 1234;
+    expect(z.getFullYear()).toBe(2009); // getters read private state
   });
 });
 
-describe("Zemen.toEC (Gregorian → Ethiopian)", () => {
+describe("Zemen.fromGregorian (Gregorian → Ethiopian)", () => {
   it("from (year, month, day) numbers — month is 0-based", () => {
-    expect(Zemen.toEC(2017, 8, 2).toString()).toBe("2009-12-27");
+    expect(Zemen.fromGregorian(2017, 8, 2).toString()).toBe("2009-12-27");
   });
 
   it("from a Date object", () => {
-    expect(Zemen.toEC(new Date(2017, 8, 2)).toString()).toBe("2009-12-27");
+    expect(Zemen.fromGregorian(new Date(2017, 8, 2)).toString()).toBe("2009-12-27");
+    expect(Zemen.fromGregorian(new Date(2023, 11, 25)).toString()).toBe("2016-4-15"); // December
   });
 
-  it("date-only ISO strings are timezone-stable (B9)", () => {
-    expect(Zemen.toEC("2017-09-02").toString()).toBe("2009-12-27"); // same in every TZ
-    expect(Zemen.toEC("2017-09-02").toString()).toBe(Zemen.toEC(2017, 8, 2).toString());
-    expect(() => Zemen.toEC("2023-02-30")).toThrow("Invalid Gregorian Date"); // no Date rollover
-    expect(() => Zemen.toEC("not a date")).toThrow("Invalid Gregorian Date");
+  it("date-only ISO strings are timezone-stable", () => {
+    expect(Zemen.fromGregorian("2017-09-02").toString()).toBe("2009-12-27"); // same in every TZ
+    expect(Zemen.fromGregorian("2017-09-02").toString()).toBe(Zemen.fromGregorian(2017, 8, 2).toString());
+    expect(() => Zemen.fromGregorian("2023-02-30")).toThrow("Invalid Gregorian Date"); // no Date rollover
+    expect(() => Zemen.fromGregorian("not a date")).toThrow("Invalid Gregorian Date");
+  });
+
+  it("rejects nonexistent Gregorian days", () => {
+    expect(() => Zemen.fromGregorian(2023, 1, 29)).toThrow("Invalid Gregorian Date"); // non-leap Feb
+    expect(() => Zemen.fromGregorian(2023, -1, 10)).toThrow("Invalid Gregorian Date");
+    expect(() => Zemen.fromGregorian(NaN, 8, 2)).toThrow("Invalid Gregorian Date");
+  });
+
+  it("rejects Gregorian dates before the ዓመተ ምሕረት epoch", () => {
+    // EC 1-1-1 is Aug 27, 8 AD.
+    expect(() => Zemen.fromGregorian(7, 7, 28)).toThrow("Invalid Gregorian Date");
+    expect(() => Zemen.fromGregorian(8, 7, 26)).toThrow("Invalid Gregorian Date");
+    expect(Zemen.fromGregorian(8, 7, 27).toString()).toBe("1-1-1");
+    expect(Zemen.fromGregorian(8, 7, 27).toGregorian().getFullYear()).toBe(8);
   });
 
   it("throws 'Invalid Argument Exception' for wrong arity or type", () => {
-    expect(() => (Zemen as any).toEC(2009, 5, 15, 15)).toThrow("Invalid Argument Exception");
-    expect(() => (Zemen as any).toEC(null)).toThrow("Invalid Argument Exception");
-    expect(() => (Zemen as any).toEC(undefined)).toThrow("Invalid Argument Exception");
-    expect(() => (Zemen as any).toEC({})).toThrow("Invalid Argument Exception");
+    expect(() => (Zemen as any).fromGregorian(2009, 5, 15, 15)).toThrow("Invalid Argument Exception");
+    expect(() => (Zemen as any).fromGregorian(null)).toThrow("Invalid Argument Exception");
+    expect(() => (Zemen as any).fromGregorian(undefined)).toThrow("Invalid Argument Exception");
+    expect(() => (Zemen as any).fromGregorian({})).toThrow("Invalid Argument Exception");
   });
 });
 
-describe("Zemen.toGC (Ethiopian → Gregorian)", () => {
-  it("from an Ethiopian date string", () => {
-    expect(Zemen.toGC("2009-12-27").toDateString()).toBe("Sat Sep 02 2017");
-  });
-
-  it("from a Zemen instance", () => {
-    expect(Zemen.toGC(new Zemen("2009-12-27")).toDateString()).toBe("Sat Sep 02 2017");
-  });
-
-  it("from (year, month, day) numbers — month is 0-based", () => {
-    expect(Zemen.toGC(2009, 11, 27).toDateString()).toBe("Sat Sep 02 2017");
+describe("toGregorian (Ethiopian → Gregorian)", () => {
+  it("converts to a JS Date", () => {
+    expect(new Zemen("2009-12-27").toGregorian().toDateString()).toBe("Sat Sep 02 2017");
+    expect(new Zemen(2009, 11, 27).toGregorian().toDateString()).toBe("Sat Sep 02 2017");
   });
 
   it("handles ጳጉሜን, the 13th month", () => {
-    expect(Zemen.toGC("2011-13-5").toDateString()).toBe("Tue Sep 10 2019");
+    expect(new Zemen("2011-13-5").toGregorian().toDateString()).toBe("Tue Sep 10 2019");
+    expect(new Zemen(2011, 12, 6).toGregorian().toDateString()).toBe("Wed Sep 11 2019"); // 2011 is leap
   });
 
-  it("throws 'Invalid Argument Exception' for wrong arity or type", () => {
-    expect(() => (Zemen as any).toGC(2009, 5, 15, 15)).toThrow("Invalid Argument Exception");
-    expect(() => (Zemen as any).toGC(null)).toThrow("Invalid Argument Exception");
-    expect(() => (Zemen as any).toGC(undefined)).toThrow("Invalid Argument Exception");
-    expect(() => (Zemen as any).toGC({})).toThrow("Invalid Argument Exception");
-  });
-});
-
-describe("Zemen.parse", () => {
-  it("parses 'y-m-d' strings", () => {
-    const date = Zemen.parse("2010-01-01");
-    expect(date).toBeInstanceOf(Zemen);
-    expect(date.getFullYear()).toBe(2010);
-    expect(date.getMonth()).toBe(0);
-    expect(date.getDate()).toBe(1);
-    expect(Zemen.parse("007-08-09").toString()).toBe("7-8-9");
+  it("round-trips with fromGregorian", () => {
+    const gc = new Date(2024, 1, 29);
+    expect(Zemen.fromGregorian(gc).toGregorian().toDateString()).toBe(gc.toDateString());
   });
 
-  it("throws ParsingError for falsy input (B8)", () => {
-    expect(() => (Zemen as any).parse()).toThrow("ParsingError: Can't parse ");
-    expect(() => (Zemen as any).parse(null)).toThrow("ParsingError: Can't parse ");
-    expect(() => Zemen.parse("")).toThrow("ParsingError: Can't parse ");
+  it("preserves Gregorian years 0-99", () => {
+    expect(new Zemen(1, 0, 1).toGregorian().getFullYear()).toBe(8); // EC 1-1-1 == Aug 27, 8 AD
+    expect(new Zemen(85, 0, 1).toGregorian().getFullYear()).toBe(92);
   });
 
-  it("throws ParsingError for malformed strings", () => {
-    expect(() => Zemen.parse("2010-01-01-0669--"))
-      .toThrow("ParsingError: Can't parse 2010-01-01-0669--");
-    expect(() => Zemen.parse("2010/01/01")).toThrow("ParsingError: Can't parse 2010/01/01");
+  it("returns a fresh Date — mutating it does not touch the instance", () => {
+    const z = new Zemen(2009, 11, 27);
+    z.toGregorian().setFullYear(1999);
+    expect(z.toGregorian().getFullYear()).toBe(2017);
   });
 
-  it("throws for any parsing pattern (not implemented)", () => {
-    expect(() => Zemen.parse("2010/01/01", "DDDD")).toThrow("Not implemented Exception :(");
+  it("rejects nonexistent Ethiopian dates at construction", () => {
+    expect(() => new Zemen(2011, 12, 30)).toThrow("Invalid Ethiopian Date");
+    expect(() => new Zemen(2000, 12, 6)).toThrow("Invalid Ethiopian Date"); // 2000 is not a leap year
+    expect(() => new Zemen(2009, -1, 10)).toThrow("Invalid Ethiopian Date");
+    expect(() => new Zemen(2009, 0, 0)).toThrow("Invalid Ethiopian Date");
   });
 });
 
 describe("names & weekdays", () => {
-  it("month names, full and short, for all 13 months", () => {
+  it("month names for all 13 months", () => {
     const full = ["መስከረም", "ጥቅምት", "ኅዳር", "ታኅሣሥ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜን"];
-    const short = ["መስከ", "ጥቅም", "ኅዳር", "ታኅሣ", "ጥር", "የካቲ", "መጋቢ", "ሚያዝ", "ግንቦ", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
     expect([...MONTH_NAMES]).toEqual(full);
-    expect(SHORT_MONTH_NAMES).toEqual(short);
     for (let m = 0; m <= 12; m += 1) {
-      const z = new Zemen(2015, m, 5); // day 5 exists in every month incl. ጳጉሜን
-      expect(z.getMonthName()).toBe(full[m]!);
-      expect(z.getShortMonthName()).toBe(short[m]!);
+      expect(new Zemen(2015, m, 5).getMonthName()).toBe(full[m]!);
     }
   });
 
-  it("weekday names across a full week", () => {
+  it("weekday names and getDay across a full week", () => {
     // 2009-12-21 E.C is a Sunday (እሑድ)
     const week = ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሓሙስ", "ዓርብ", "ቅዳሜ"];
     expect([...WEEKDAY_NAMES]).toEqual(week);
     for (let i = 0; i < 7; i += 1) {
       const z = new Zemen(2009, 11, 21 + i);
       expect(z.getDayOfWeek()).toBe(week[i]!);
-      expect(z.getGCWeekDay()).toBe(i);
+      expect(z.getDay()).toBe(i);
     }
-  });
-});
-
-describe("regression fixes (0.0.9)", () => {
-  it("new Zemen(dateObject) delegates to Zemen.toEC (B6)", () => {
-    expect(new Zemen(new Date(2017, 8, 2)).toString()).toBe("2009-12-27");
-    expect(new Zemen(new Date(2023, 11, 25)).toString()).toBe("2016-4-15"); // December works now
-    const leapDay = new Date(2024, 1, 29);
-    expect(new Zemen(leapDay).toString()).toBe(Zemen.toEC(leapDay).toString());
-  });
-
-  it("toGC preserves Gregorian years 0-99 (B7)", () => {
-    expect(Zemen.toGC(1, 0, 1).getFullYear()).toBe(8); // EC 1-1-1 == Aug 27, 8 AD
-    expect(Zemen.toGC(85, 0, 1).getFullYear()).toBe(92);
-    // knock-on: weekday queries for small years now use the real year
-    expect(new Zemen(91, 0, 1).gc.getFullYear()).toBe(98);
-  });
-
-  it("rejects nonexistent ጳጉሜን days instead of spilling over (B2, issue #41)", () => {
-    expect(() => Zemen.toGC(2011, 12, 30)).toThrow("Invalid Ethiopian Date");
-    expect(() => Zemen.toGC(2000, 12, 6)).toThrow("Invalid Ethiopian Date"); // 2000 is not a leap year
-    expect(Zemen.toGC(2011, 12, 6).toDateString()).toBe("Wed Sep 11 2019"); // 2011 is
-  });
-
-  it("rejects Gregorian dates before the ዓመተ ምሕረት epoch (B10)", () => {
-    // EC 1-1-1 is Aug 27, 8 AD; earlier inputs used to produce instances
-    // whose .gc field was ~5500 years off (the era information was lost).
-    expect(() => Zemen.toEC(7, 7, 28)).toThrow("Invalid Gregorian Date");
-    expect(() => Zemen.toEC(8, 7, 26)).toThrow("Invalid Gregorian Date");
-    expect(Zemen.toEC(8, 7, 27).toString()).toBe("1-1-1");
-    expect(Zemen.toEC(8, 7, 27).gc.getFullYear()).toBe(8); // .gc consistent again
-    const early = new Date(2000, 7, 28);
-    early.setFullYear(7);
-    expect(() => new Zemen(early)).toThrow("Invalid Gregorian Date");
-  });
-
-  it("rejects month -1 and day 0 at the public boundary (B4)", () => {
-    expect(() => Zemen.toGC(2009, -1, 10)).toThrow("Invalid Ethiopian Date");
-    expect(() => Zemen.toGC(2009, 0, 0)).toThrow("Invalid Ethiopian Date");
-    expect(() => Zemen.toEC(2023, -1, 10)).toThrow("Invalid Gregorian Date");
-    expect(() => new Zemen(2009, -1, 10)).toThrow("Invalid Ethiopian Date");
   });
 });

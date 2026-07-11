@@ -15,9 +15,3 @@ coverage/
 # editors
 .vscode/
 .idea/
-
-# local working notes
-plan.md
-pitch.md
-SHIP.md
-BUGS-0.0.9.md
