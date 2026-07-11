@@ -1,42 +1,50 @@
 {
   "name": "zemen",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Ethiopian calender library",
-  "main": "zemen.js",
-  "types": "./src/index.d.ts",
-  "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "babel-loader": "^8.0.4",
-    "coveralls": "^2.13.1",
-    "eslint": "^5.6.1",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-config-prettier": "^3.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "jest-cli": "^23.6.0",
-    "npx": "^10.2.0",
-    "rimraf": "^2.6.2",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2"
+  "author": "m3hari",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m3hari/zemen.git"
   },
-  "resolutions": {
-    "babel-core": "7.0.0-bridge.0"
-  },
-  "scripts": {
-    "dev": "npx rimraf dist && npx webpack  --mode development",
-    "lint": "npx eslint --fix .",
-    "test": "bun test",
-    "build": "npx rimraf dist && npx webpack --progress --mode production --output ./dist/zemen.min.js",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
-  },
-  "jest": {
-    "verbose": true
-  },
+  "homepage": "https://m3hari.github.io/zemen/",
+  "bugs": "https://github.com/m3hari/zemen/issues",
   "keywords": [
     "date",
     "calender",
     "ethiopia"
   ],
-  "author": "m3hari",
-  "license": "MIT"
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "LICENCE.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "bun scripts/build.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run typecheck && bun test && bun run build",
+    "prepublishOnly": "bun run check"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.14",
+    "typescript": "^7.0.2"
+  }
 }

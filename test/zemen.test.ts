@@ -161,9 +161,9 @@ describe("Zemen Public API", () => {
     })();
     (() => {
       it("should return empty string for undefined datestring", () => {
-        const res1 = Zemen.parse();
-        const res2 = Zemen.parse(null);
-        const res3 = Zemen.parse(undefined);
+        const res1 = Zemen.parse() as unknown as string;
+        const res2 = Zemen.parse(null) as unknown as string;
+        const res3 = Zemen.parse(undefined) as unknown as string;
         expect(res1).toBe("");
         expect(res2).toBe("");
         expect(res3).toBe("");

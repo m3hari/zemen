@@ -171,7 +171,7 @@ function testToGregorian(testCaseIndex: number) {
             query = [ecDate[1], ecDate[2], ecDate[3], JD_EPOCH_OFFSET_AMETE_MIHRET];
         }
         const expected = [gcDate[1], gcDate[2], gcDate[3]];
-        const actual = zemen.toGC(query);
+        const actual: number[] = zemen.toGC(query);
         expect(actual).toEqual(expected);
     });
 }
@@ -183,7 +183,7 @@ function testToEthiopian(testCaseIndex: number) {
     it(`should  convert ${gcDate} G.C to ${ecDate} E.C`, () => {
         const query = [gcDate[1], gcDate[2], gcDate[3]];
         const expected = [ecDate[1], ecDate[2], ecDate[3]];
-        const actual = zemen.toEC(query);
+        const actual: number[] = zemen.toEC(query);
         expect(actual).toEqual(expected);
     });
 }
