@@ -182,6 +182,13 @@ describe("conversion — canonical test data", () => {
       expect(() => toGregorian(2009, 14, 1)).toThrow("Invalid Ethiopian Date");
       expect(() => toGregorian(2009, 9, 31)).toThrow("Invalid Ethiopian Date");
     });
+    it("rejects nonexistent ጳጉሜን days (B2, issue #41)", () => {
+      expect(() => toGregorian(2000, 13, 6)).toThrow("Invalid Ethiopian Date"); // non-leap
+      expect(() => toGregorian(1999, 13, 7)).toThrow("Invalid Ethiopian Date"); // leap, but only 6 days
+      expect(() => toGregorian(2011, 13, 30)).toThrow("Invalid Ethiopian Date");
+      expect(toGregorian(1999, 13, 6)).toEqual(toGregorian(1999, 13, 6)); // leap year day 6 valid
+      expect(() => toGregorian(2000, 13, 5)).not.toThrow(); // canonical: Sep 10 2008
+    });
     it("rejects invalid Gregorian dates", () => {
       expect(() => toEthiopic(2009, 13, -1)).toThrow("Invalid Gregorian Date");
       expect(() => toEthiopic(2009, -2, 32)).toThrow("Invalid Gregorian Date");

@@ -154,8 +154,10 @@ describe("known quirks", () => {
     expect(Zemen.toGC(1, 0, 1).toDateString()).toBe("Thu Aug 27 1908");
   });
 
-  it("ጳጉሜን days 7-30 pass validation and spill into the next year", () => {
-    expect(Zemen.toGC(2011, 12, 30).toDateString()).toBe("Sat Oct 05 2019");
-    expect(() => Zemen.toGC(2009, -1, 10)).not.toThrow(); // public month -1 → internal 0
+  it("rejects nonexistent ጳጉሜን days instead of spilling over (B2, issue #41)", () => {
+    expect(() => Zemen.toGC(2011, 12, 30)).toThrow("Invalid Ethiopian Date");
+    expect(() => Zemen.toGC(2000, 12, 6)).toThrow("Invalid Ethiopian Date"); // 2000 is not a leap year
+    expect(Zemen.toGC(2011, 12, 6).toDateString()).toBe("Wed Sep 11 2019"); // 2011 is
+    expect(() => Zemen.toGC(2009, -1, 10)).not.toThrow(); // month floor: see B4
   });
 });
