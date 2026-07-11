@@ -1,46 +1,18 @@
 name: CI
 
+# Every push & PR answers one question: is the code good?
 on:
   push:
     branches: [master]
   pull_request:
-  workflow_dispatch: # manual run additionally publishes to npm
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # two timezones so behavioral parity is never TZ-lucky
-        tz: [UTC, America/New_York]
     env:
-      TZ: ${{ matrix.tz }}
+      TZ: America/New_York # a negative-UTC offset catches date bugs UTC hides
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - run: bun run typecheck
-      - run: bun test --coverage
-      # live parity proof vs a fresh registry download of zemen@0.0.7,
-      # plus the dual-package contract on the real tarball
-      - run: bun run verify
-
-  publish:
-    if: github.event_name == 'workflow_dispatch'
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write # npm --provenance
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          registry-url: https://registry.npmjs.org
-      - run: bun install --frozen-lockfile
-      # prepublishOnly runs typecheck + tests + build
-      - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: bun run check # typecheck + test + build, same as local

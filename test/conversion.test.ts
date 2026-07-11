@@ -274,7 +274,7 @@ describe("conversion — proleptic Gregorian oracle", () => {
           backward[0] !== ec[0] || backward[1] !== ec[1] || backward[2] !== ec[2]
         ) {
           bad += 1;
-          if (!first) first = `EC ${ec} ⇆ GC ${expected}: got toGC=${forward}, toEC=${backward}`;
+          if (!first) first = `EC ${ec} ⇆ GC ${expected}: got toGregorian=${forward}, toEthiopic=${backward}`;
         }
       }
     }

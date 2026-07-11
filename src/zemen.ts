@@ -1,74 +1,60 @@
-import { toEthiopic, toGregorian, type Ymd } from "./conversion";
+import { toEthiopic, toGregorian } from "./conversion";
 import { formatWithTokens } from "./format";
-import { MONTH_NAMES, SHORT_MONTH_NAMES, WEEKDAY_NAMES } from "./names";
+import { MONTH_NAMES, WEEKDAY_NAMES } from "./names";
 
-export type ZemenDateValue = string | number | Date | Zemen;
+/** Build the Gregorian Date backing an Ethiopian date (validates via toGregorian). */
+function gregorianDateOf(year: number, month0: number, day: number): Date {
+  const [gy, gm, gd] = toGregorian(year, month0 + 1, day);
+  const date = new Date(gy, gm - 1, gd);
+  date.setFullYear(gy); // new Date(y, …) would map years 0-99 into 1900-1999
+  return date;
+}
 
 /**
- * An Ethiopian calendar date. Months are 0-based across the public API
- * (0 = መስከረም … 12 = ጳጉሜን), matching `Date#getMonth`.
+ * An Ethiopian calendar date — the read API of JavaScript's `Date`,
+ * translated to the Ethiopian calendar. Months are 0-based across the public
+ * API (0 = መስከረም … 12 = ጳጉሜን), matching `Date#getMonth`. Instances are
+ * immutable.
  */
 export class Zemen {
-  readonly year: number;
-  readonly month: number;
-  readonly date: number;
-  /** Gregorian equivalent; backs the weekday queries. */
-  readonly gc: Date;
+  readonly #year: number;
+  readonly #month: number;
+  readonly #date: number;
+  /** Gregorian equivalent; backs getDay()/toGregorian(). */
+  readonly #gc: Date;
 
   constructor();
-  constructor(val: string | Date);
+  constructor(val: string);
   constructor(year: number | string, month: number | string, day: number | string);
-  constructor(val?: ZemenDateValue, month?: number | string, day?: number | string) {
+  constructor(val?: string | number, month?: number | string, day?: number | string) {
     if (arguments.length === 0) {
-      const today = Zemen.toEC(new Date());
-      this.year = today.year;
-      this.month = today.month;
-      this.date = today.date;
+      const today = Zemen.fromGregorian(new Date());
+      this.#year = today.#year;
+      this.#month = today.#month;
+      this.#date = today.#date;
     } else if (arguments.length === 3) {
-      this.year = parseInt(String(val), 10);
-      this.month = parseInt(String(month), 10);
-      this.date = parseInt(String(day), 10);
+      this.#year = parseInt(String(val), 10);
+      this.#month = parseInt(String(month), 10);
+      this.#date = parseInt(String(day), 10);
     } else if (arguments.length === 1 && typeof val === "string") {
-      const parsed = Zemen.parse(val);
-      this.year = parsed.getFullYear();
-      this.month = parsed.getMonth();
-      this.date = parsed.getDate();
-    } else if (arguments.length === 1 && val instanceof Date) {
-      const ec = Zemen.toEC(val);
-      this.year = ec.year;
-      this.month = ec.month;
-      this.date = ec.date;
+      const parts = val ? val.split("-") : [];
+      if (parts.length !== 3) {
+        throw new Error(`ParsingError: Can't parse ${val}`);
+      }
+      this.#year = parseInt(parts[0]!, 10);
+      this.#month = Number(parts[1]) - 1;
+      this.#date = parseInt(parts[2]!, 10);
     } else {
       throw new Error("Invalid Argument Exception");
     }
-    this.gc = Zemen.toGC(this.year, this.month, this.date);
+    this.#gc = gregorianDateOf(this.#year, this.#month, this.#date);
   }
 
-  /** Ethiopian → Gregorian: accepts `('y-m-d')`, `(zemen)`, or `(year, month, day)`. */
-  static toGC(val: string | Zemen): Date;
-  static toGC(year: number, month: number, day: number): Date;
-  static toGC(val: ZemenDateValue, month?: number, day?: number): Date {
-    let g: Ymd;
-    if (arguments.length === 3) {
-      g = toGregorian(val as number, (month as number) + 1, day as number);
-    } else if (arguments.length === 1 && typeof val === "string") {
-      const et = new Zemen(val);
-      g = toGregorian(et.year, et.month + 1, et.date);
-    } else if (arguments.length === 1 && val instanceof Zemen) {
-      g = toGregorian(val.year, val.month + 1, val.date);
-    } else {
-      throw new Error("Invalid Argument Exception");
-    }
-    const date = new Date(g[0], g[1] - 1, g[2]);
-    date.setFullYear(g[0]); // new Date(y, …) would map years 0-99 into 1900-1999
-    return date;
-  }
-
-  /** Gregorian → Ethiopian: accepts `(dateString)`, `(date)`, or `(year, month, day)`. */
-  static toEC(val: string | Date): Zemen;
-  static toEC(year: number, month: number, day: number): Zemen;
-  static toEC(val: ZemenDateValue, month?: number, day?: number): Zemen {
-    let g: Ymd;
+  /** Gregorian → Ethiopian: accepts a `Date`, a date string, or `(year, month, day)` with a 0-based month. */
+  static fromGregorian(val: string | Date): Zemen;
+  static fromGregorian(year: number, month: number, day: number): Zemen;
+  static fromGregorian(val: string | Date | number, month?: number, day?: number): Zemen {
+    let g: [number, number, number];
     if (arguments.length === 3) {
       g = [val as number, (month as number) + 1, day as number];
     } else if (arguments.length === 1 && typeof val === "string") {
@@ -94,21 +80,9 @@ export class Zemen {
     return new Zemen(e[0], e[1] - 1, e[2]);
   }
 
-  /** Parse an Ethiopian `'y-m-d'` string. */
-  static parse(dateString: string, pattern?: string): Zemen;
-  static parse(dateString?: string | null, pattern?: string): Zemen {
-    if (!dateString) {
-      throw new Error(`ParsingError: Can't parse ${dateString}`);
-    }
-    if (pattern) {
-      throw new Error("Not implemented Exception :(");
-    }
-    const parts = dateString.split("-");
-    if (parts.length !== 3) {
-      throw new Error(`ParsingError: Can't parse ${dateString}`);
-    }
-    const [y, m, d] = parts as [string, string, string];
-    return new Zemen(y, Number(m) - 1, d);
+  /** This date in the Gregorian calendar, as a JS `Date`. */
+  toGregorian(): Date {
+    return new Date(this.#gc.getTime());
   }
 
   /** Format with `Y M D d e E` tokens; no pattern → `'y-m-d'`. */
@@ -118,36 +92,32 @@ export class Zemen {
 
   /** `'y-m-d'`, month shown 1-based, no zero padding. */
   toString(): string {
-    return `${this.year}-${this.month + 1}-${this.date}`;
-  }
-
-  getDate(): number {
-    return this.date;
-  }
-
-  getMonth(): number {
-    return this.month;
+    return `${this.#year}-${this.#month + 1}-${this.#date}`;
   }
 
   getFullYear(): number {
-    return this.year;
+    return this.#year;
+  }
+
+  getMonth(): number {
+    return this.#month;
+  }
+
+  getDate(): number {
+    return this.#date;
+  }
+
+  /** Weekday index, 0 = Sunday — same 7-day week as `Date#getDay`. */
+  getDay(): number {
+    return this.#gc.getDay();
   }
 
   getMonthName(): string {
-    return MONTH_NAMES[this.month]!;
-  }
-
-  getShortMonthName(): string {
-    return SHORT_MONTH_NAMES[this.month]!;
+    return MONTH_NAMES[this.#month]!;
   }
 
   getDayOfWeek(): string {
-    return WEEKDAY_NAMES[this.getGCWeekDay()]!;
-  }
-
-  /** Gregorian weekday index, 0 = Sunday. */
-  getGCWeekDay(): number {
-    return this.gc.getDay();
+    return WEEKDAY_NAMES[this.getDay()]!;
   }
 }
 
