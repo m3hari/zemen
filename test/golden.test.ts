@@ -8,8 +8,12 @@
  * and stays in CI permanently.
  */
 import { describe, expect, it } from "bun:test";
-import { Zemen } from "./_lib";
+import { Zemen as ZemenClass } from "./_lib";
 import fixtures from "./golden/fixtures.json";
+
+// The replay deliberately exercises off-contract inputs (nulls, wrong
+// arities, garbage strings), so it drives the class through an untyped alias.
+const Zemen: any = ZemenClass;
 
 /** Mirror of the generator's encoding: explicit `Error`s pin the message,
  * incidental engine errors pin only the class name. */
