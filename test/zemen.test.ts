@@ -149,11 +149,11 @@ describe("names & weekdays", () => {
 });
 
 describe("known quirks", () => {
-  it("new Zemen(dateObject) runs one month ahead, and throws for December", () => {
-    expect(new Zemen(new Date(2017, 8, 2)).toString()).toBe("2010-1-22"); // not 2009-12-27!
-    expect(() => new Zemen(new Date(2023, 11, 25))).toThrow("Invalid Gregorian Date");
-    // the static form is the correct one:
-    expect(Zemen.toEC(new Date(2017, 8, 2)).toString()).toBe("2009-12-27");
+  it("new Zemen(dateObject) delegates to Zemen.toEC (B6)", () => {
+    expect(new Zemen(new Date(2017, 8, 2)).toString()).toBe("2009-12-27");
+    expect(new Zemen(new Date(2023, 11, 25)).toString()).toBe("2016-4-15"); // December works now
+    const leapDay = new Date(2024, 1, 29);
+    expect(new Zemen(leapDay).toString()).toBe(Zemen.toEC(leapDay).toString());
   });
 
   it("toGC maps Gregorian years 0-99 into 1900-1999 (Date constructor)", () => {
