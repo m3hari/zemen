@@ -104,7 +104,7 @@ export function toGregorian(year: number, month: number, day: number, era: numbe
     throw new Error("Invalid Ethiopian Date");
   }
   if (era !== AMETE_ALEM && era !== AMETE_MIHRET) {
-    throw new Error("Unknown Era:");
+    throw new Error(`Unknown Era: ${era}`);
   }
   return jdnToGregorian(ethiopicToJdn(year, month, day, era));
 }

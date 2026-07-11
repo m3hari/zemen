@@ -202,8 +202,8 @@ describe("conversion — canonical test data", () => {
       expect(() => toEthiopic(2024, 2, 29)).not.toThrow(); // leap year
       expect(() => toEthiopic(2000, 2, 29)).not.toThrow(); // leap century
     });
-    it("rejects unknown eras", () => {
-      expect(() => toGregorian(2009, 10, 10, 25)).toThrow("Unknown Era:");
+    it("rejects unknown eras, naming the offender (B11)", () => {
+      expect(() => toGregorian(2009, 10, 10, 25)).toThrow("Unknown Era: 25");
     });
     it("supports ዓመተ ዓለም dates", () => {
       expect(Array.isArray(toGregorian(-500, 10, 10))).toBe(true);
