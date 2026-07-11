@@ -131,11 +131,4 @@ const z: Zemen = Zemen.toEC(new Date());
   and the [Calendrica](http://emr.cs.iit.edu/home/reingold/calendar-book/Calendrica.html) applet.
 - Author: [m3hari](https://github.com/m3hari) — መሐሪ ጌታ
 
-## Contributing
-
-1. Fork it!
-2. Create your feature branch
-3. `bun install && bun run check`
-4. Submit a pull request :D
-
 [MIT](LICENCE.md)

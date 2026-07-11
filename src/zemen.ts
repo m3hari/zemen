@@ -31,8 +31,8 @@ export class Zemen {
       this.month = parsed.getMonth();
       this.date = parsed.getDate();
     } else if (arguments.length === 1 && val instanceof Date) {
-      // Known quirk (intentional, see NOTES.md): the month is double-incremented,
-      // so this path runs one month ahead and throws for December dates.
+      // Known quirk (intentional): the month is double-incremented, so this
+      // path runs one month ahead and throws for December dates.
       const ec = Zemen.toEC(val.getFullYear(), val.getMonth() + 1, val.getDate());
       this.year = ec.year;
       this.month = ec.month;
