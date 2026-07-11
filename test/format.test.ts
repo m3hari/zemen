@@ -8,7 +8,7 @@ describe("format", () => {
   const cases: [pattern: string, expected: string][] = [
     ["Y", "2009"],
     ["YY", "09"],
-    ["YYY", "092009"], // YY then Y — preserved repetition quirk
+    ["YYY", "092009"], // YY then Y — repetition quirk
     ["YYYY", "2009"],
     ["YYYYY", "20092009"],
     ["YYYYYY", "200909"],

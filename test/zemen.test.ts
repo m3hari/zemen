@@ -37,7 +37,7 @@ describe("Zemen constructor", () => {
     }
   });
 
-  it("empty string dies in parse with a TypeError (preserved quirk)", () => {
+  it("empty string dies in parse with a TypeError (known quirk)", () => {
     expect(() => new Zemen("")).toThrow(TypeError);
   });
 });
@@ -100,7 +100,7 @@ describe("Zemen.parse", () => {
     expect(Zemen.parse("007-08-09").toString()).toBe("7-8-9");
   });
 
-  it("returns '' for falsy input (preserved quirk)", () => {
+  it("returns '' for falsy input (known quirk)", () => {
     expect(Zemen.parse() as unknown as string).toBe("");
     expect(Zemen.parse(null) as unknown as string).toBe("");
     expect(Zemen.parse(undefined) as unknown as string).toBe("");
@@ -142,7 +142,7 @@ describe("names & weekdays", () => {
   });
 });
 
-describe("preserved quirks (kept for byte-compatibility with 0.0.7)", () => {
+describe("known quirks", () => {
   it("new Zemen(dateObject) runs one month ahead, and throws for December", () => {
     expect(new Zemen(new Date(2017, 8, 2)).toString()).toBe("2010-1-22"); // not 2009-12-27!
     expect(() => new Zemen(new Date(2023, 11, 25))).toThrow("Invalid Gregorian Date");
