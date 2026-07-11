@@ -200,3 +200,64 @@ describe("conversion — canonical test data", () => {
     });
   });
 });
+
+// B1 regression: the closed-form month formula misplaced the 1st of Feb-Nov
+// in non-leap century Gregorian years (1800, 1900, 2100, 2200).
+describe("conversion — proleptic Gregorian oracle", () => {
+  const pagumeDays = (y: number) => (y % 4 === 3 ? 6 : 5);
+  const ecMonthDays = (y: number, m: number) => (m === 13 ? pagumeDays(y) : 30);
+
+  it("century-year month starts round-trip (B1)", () => {
+    // toEthiopic was always correct; toGregorian must invert it exactly.
+    for (const y of [1700, 1800, 1900, 2000, 2100, 2200, 2300]) {
+      for (let m = 1; m <= 12; m += 1) {
+        expect(toGregorian(...toEthiopic(y, m, 1))).toEqual([y, m, 1]);
+      }
+    }
+  });
+
+  it("400-year cycle boundary days round-trip (B1)", () => {
+    // Dec 31 of 1600/2000/2400 previously came back as Jan 1 of the next year.
+    for (const y of [1600, 2000, 2400]) {
+      expect(toGregorian(...toEthiopic(y, 12, 31))).toEqual([y, 12, 31]);
+      expect(toGregorian(...toEthiopic(y + 1, 1, 1))).toEqual([y + 1, 1, 1]);
+    }
+  });
+
+  it("matches JS Date for every day 1583-2400, both directions", () => {
+    // Anchor from the canonical table: GC 2005-01-01 == EC 1997-4-23.
+    const next = ([y, m, d]: number[]): number[] =>
+      d! < ecMonthDays(y!, m!) ? [y!, m!, d! + 1] : m! < 13 ? [y!, m! + 1, 1] : [y! + 1, 1, 1];
+    const prev = ([y, m, d]: number[]): number[] =>
+      d! > 1 ? [y!, m!, d! - 1] : m! > 1 ? [y!, m! - 1, ecMonthDays(y!, m! - 1)] : [y! - 1, 13, pagumeDays(y! - 1)];
+    let bad = 0;
+    let first = "";
+    for (const dir of [1, -1] as const) {
+      let gc = new Date(Date.UTC(2005, 0, 1));
+      let ec = [1997, 4, 23];
+      while (true) {
+        gc = new Date(gc.getTime() + dir * 86400000);
+        ec = dir === 1 ? next(ec) : prev(ec);
+        const gy = gc.getUTCFullYear();
+        if (gy < 1583 || gy > 2400) break;
+        const expected = [gy, gc.getUTCMonth() + 1, gc.getUTCDate()];
+        const forward = toGregorian(ec[0]!, ec[1]!, ec[2]!);
+        const backward = toEthiopic(expected[0]!, expected[1]!, expected[2]!);
+        if (
+          forward[0] !== expected[0] || forward[1] !== expected[1] || forward[2] !== expected[2] ||
+          backward[0] !== ec[0] || backward[1] !== ec[1] || backward[2] !== ec[2]
+        ) {
+          bad += 1;
+          if (!first) first = `EC ${ec} ⇆ GC ${expected}: got toGC=${forward}, toEC=${backward}`;
+        }
+      }
+    }
+    expect(bad, first).toBe(0);
+  });
+
+  it("Ethiopian leap-day round-trips (ጳጉሜን 6 every year % 4 === 3)", () => {
+    for (const y of [1891, 1995, 1999, 2003, 2091]) {
+      expect(toEthiopic(...toGregorian(y, 13, 6))).toEqual([y, 13, 6]);
+    }
+  });
+});

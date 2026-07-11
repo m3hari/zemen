@@ -52,37 +52,36 @@ function gregorianToJdn(year: number, month: number, day: number): number {
   );
 }
 
-// Cycle lengths in days: 1461 = 4 years, 36524 = 100, 146097 = 400, 730485 = 2000.
+// Cycle lengths in days: 1461 = 4 years, 36524 = 100 years, 146097 = 400 years.
 function jdnToGregorian(jdn: number): Ymd {
-  const r2000 = (jdn - GREGORIAN_EPOCH) % 730485;
   const r400 = (jdn - GREGORIAN_EPOCH) % 146097;
-  const r100 = r400 % 36524;
+  // The last day of a 400-year cycle (Dec 31 of 1600, 2000, 2400…) belongs to
+  // century index 3; unclamped division slots it into a nonexistent 5th century.
+  const century = Math.min(floorDiv(r400, 36524), 3);
+  const r100 = r400 - century * 36524;
   const r4 = r100 % 1461;
   let n = (r4 % 365) + 365 * floorDiv(r4, 1460);
-  const s = floorDiv(r4, 1095);
   const year =
     400 * floorDiv(jdn - GREGORIAN_EPOCH, 146097) +
-    100 * floorDiv(r400, 36524) +
+    100 * century +
     4 * floorDiv(r100, 1461) +
-    floorDiv(r4, 365) - floorDiv(r4, 1460) - floorDiv(r2000, 730484) +
+    floorDiv(r4, 365) - floorDiv(r4, 1460) +
     1;
-  const t = floorDiv(364 + s - n, 306);
-  const month = t * (floorDiv(n, 31) + 1) + (1 - t) * (floorDiv(5 * (n - s) + 13, 153) + 1);
-  n += 1 - floorDiv(r2000, 730484);
+  n += 1;
 
-  if (r100 === 0 && n === 0 && r400 !== 0) {
-    return [year, 12, 31];
-  }
-  let day = n;
+  // Walk the month lengths to find month and day. (The original closed-form
+  // month expression assumed every 4th year is leap, which is false in
+  // non-leap century years — 1900, 2100 — and misplaced the 1st of Feb-Nov.)
+  let month = 1;
   for (let m = 1; m <= 12; m += 1) {
     const daysInMonth = m === 2 && isGregorianLeap(year) ? 29 : MONTH_DAYS[m]!;
     if (n <= daysInMonth) {
-      day = n;
+      month = m;
       break;
     }
     n -= daysInMonth;
   }
-  return [year, month, day];
+  return [year, month, n];
 }
 
 /**
