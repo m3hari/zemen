@@ -4,68 +4,48 @@
  * Adopted from http://www.geez.org/Calendars/EthiopicCalendar.java
  */
 
-const JD_EPOCH_OFFSET_AMETE_ALEM = -285019; //      ዓ/ዓ    
+const JD_EPOCH_OFFSET_AMETE_ALEM = -285019; //      ዓ/ዓ
 const JD_EPOCH_OFFSET_AMETE_MIHRET = 1723856; //    ዓ/ም
 const JD_EPOCH_OFFSET_GREGORIAN = 1721426;
-const JD_EPOCH_OFFSET_UNSET = -1;
 
-let JDN_OFFSET = JD_EPOCH_OFFSET_UNSET;
-
-const GREGORIAN_NUMBER_OF_MONTHS = 12;
-const monthDays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const GREGORIAN_MONTH_DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 /** HELPERS * */
-function quotient(i, j) {
-    return Math.floor(i / j);
-}
+const quotient = (i: number, j: number): number => Math.floor(i / j);
 
-function mod(i, j) {
-    return i % j;
-}
+const mod = (i: number, j: number): number => i % j;
 
-function isGregorianLeap(year) {
-    return (year % 4 === 0) && ((year % 100 !== 0) || (year % 400 === 0));
-}
+const isGregorianLeap = (year: number): boolean =>
+    (year % 4 === 0) && ((year % 100 !== 0) || (year % 400 === 0));
 
 /** ERA HELPERS */
-function setEra(era) {
-    if ((era === JD_EPOCH_OFFSET_AMETE_ALEM) || (era === JD_EPOCH_OFFSET_AMETE_MIHRET)) {
-        JDN_OFFSET = era;
-    } else {
-        throw (new Error("Unknown Era:", era));
+function assertKnownEra(era: number): void {
+    if ((era !== JD_EPOCH_OFFSET_AMETE_ALEM) && (era !== JD_EPOCH_OFFSET_AMETE_MIHRET)) {
+        // The original threw `new Error("Unknown Era:", era)`; Error ignores the
+        // second argument, so the observable message is exactly "Unknown Era:".
+        throw new Error("Unknown Era:");
     }
 }
 
-function isEraSet() {
-    return JD_EPOCH_OFFSET_UNSET !== JDN_OFFSET;
-}
-
-function unsetEra() {
-    JDN_OFFSET = JD_EPOCH_OFFSET_UNSET;
-}
-
-function guessEraFromJDN(jdn) {
+function guessEraFromJDN(jdn: number): number {
     return (jdn >= (JD_EPOCH_OFFSET_AMETE_MIHRET + 365)) ?
         JD_EPOCH_OFFSET_AMETE_MIHRET : JD_EPOCH_OFFSET_AMETE_ALEM;
 }
 
 /** CONVERSION * */
-function ethiopicToJDN(day, month, year) {
-    const ERA = isEraSet() ? JDN_OFFSET : JD_EPOCH_OFFSET_AMETE_MIHRET;
-    const jdn = (ERA + 365) +
+function ethiopicToJDN(day: number, month: number, year: number, era: number): number {
+    return (era + 365) +
         365 * (year - 1) +
         quotient(year, 4) +
         30 * month +
         day - 31;
-
-    return jdn;
 }
 
-function jdnToEthiopic(jdn) {
-    const ERA = isEraSet() ? JDN_OFFSET : guessEraFromJDN(jdn);
-    const r = mod((jdn - ERA), 1461);
+function jdnToEthiopic(jdn: number): [number, number, number] {
+    const era = guessEraFromJDN(jdn);
+    const r = mod((jdn - era), 1461);
     const n = mod(r, 365) + 365 * quotient(r, 1460);
-    const year = 4 * quotient((jdn - ERA), 1461) +
+    const year = 4 * quotient((jdn - era), 1461) +
         quotient(r, 365) -
         quotient(r, 1460);
     const month = quotient(n, 30) + 1;
@@ -74,7 +54,7 @@ function jdnToEthiopic(jdn) {
     return [year, month, day];
 }
 
-function gregorianToJDN(day, month, year) {
+function gregorianToJDN(day: number, month: number, year: number): number {
     const s = quotient(year, 4) -
         quotient(year - 1, 4) -
         quotient(year, 100) +
@@ -88,17 +68,15 @@ function gregorianToJDN(day, month, year) {
         (1 - t) * (59 + s + 30 * (month - 3) + quotient((3 * month - 7), 5)) +
         day - 1;
 
-    const j = JD_EPOCH_OFFSET_GREGORIAN +
+    return JD_EPOCH_OFFSET_GREGORIAN +
         365 * (year - 1) +
         quotient(year - 1, 4) -
         quotient(year - 1, 100) +
         quotient(year - 1, 400) +
         n;
-
-    return j;
 }
 
-function jdnToGregorian(jdn) {
+function jdnToGregorian(jdn: number): [number, number, number] {
     const r2000 = mod((jdn - JD_EPOCH_OFFSET_GREGORIAN), 730485);
     const r400 = mod((jdn - JD_EPOCH_OFFSET_GREGORIAN), 146097);
     const r100 = mod(r400, 36524);
@@ -117,13 +95,13 @@ function jdnToGregorian(jdn) {
     n += 1 - quotient(r2000, 730484);
     let day = n;
 
-
     if ((r100 === 0) && (n === 0) && (r400 !== 0)) {
         month = 12;
         day = 31;
     } else {
-        monthDays[2] = (isGregorianLeap(year)) ? 29 : 28;
-        for (let i = 1; i <= GREGORIAN_NUMBER_OF_MONTHS; i += 1) {
+        const monthDays = [...GREGORIAN_MONTH_DAYS];
+        monthDays[2] = isGregorianLeap(year) ? 29 : 28;
+        for (let i = 1; i <= 12; i += 1) {
             if (n <= monthDays[i]) {
                 day = n;
                 break;
@@ -132,51 +110,26 @@ function jdnToGregorian(jdn) {
         }
     }
     return [year, month, day];
-
-}
-
-function gregorianToEthiopic(day, month, year) {
-    const jdn = gregorianToJDN(day, month, year);
-    return jdnToEthiopic(jdn);
-}
-
-function ethioipicToGreg(day, month, year) {
-    const jdn = ethiopicToJDN(day, month, year);
-    return jdnToGregorian(jdn);
-}
-
-function ethioipicToGregorian(day, month, year, era) {
-    setEra(era);
-    const result = ethioipicToGreg(day, month, year);
-    unsetEra();
-    return result;
 }
 
 /** API * */
 
-/** ethiopian to gregorian */
-function toGC(dateArray) {
-    const [y, m, d] = dateArray
-    let era = dateArray[3];
+/** ethiopian [year, month(1-based), day, era?] to gregorian [year, month(1-based), day] */
+export function toGC(dateArray: number[]): [number, number, number] {
+    const [y, m, d] = dateArray as [number, number, number];
+    const era = dateArray[3] || JD_EPOCH_OFFSET_AMETE_MIHRET;
     if (d < 0 || d > 30 || m < 0 || m > 13) {
         throw new Error('Invalid Ethiopian Date');
     }
-    if (!era) {
-        era = JD_EPOCH_OFFSET_AMETE_MIHRET;
-    }
-    return ethioipicToGregorian(d, m, y, era);
+    assertKnownEra(era);
+    return jdnToGregorian(ethiopicToJDN(d, m, y, era));
 }
 
-/** gregorian to ethiopian */
-function toEC(dateArray) {
-    const [y, m, d] = dateArray;
+/** gregorian [year, month(1-based), day] to ethiopian [year, month(1-based), day] */
+export function toEC(dateArray: number[]): [number, number, number] {
+    const [y, m, d] = dateArray as [number, number, number];
     if (d < 0 || d > 31 || m < 0 || m > 12) {
         throw new Error('Invalid Gregorian Date');
     }
-    return gregorianToEthiopic(d, m, y);
+    return jdnToEthiopic(gregorianToJDN(d, m, y));
 }
-
-
-
-module.exports.toGC = toGC;
-module.exports.toEC = toEC;
