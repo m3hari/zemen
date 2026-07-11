@@ -97,7 +97,7 @@ function jdnToGregorian(jdn: number): Ymd {
  * @throws 'Invalid Ethiopian Date' | 'Unknown Era:'
  */
 export function toGregorian(year: number, month: number, day: number, era: number = AMETE_MIHRET): Ymd {
-  if (day < 0 || month < 0 || month > 13 || day > (month >= 1 && month <= 13 ? daysInEthiopicMonth(year, month) : 30)) {
+  if (day < 1 || month < 1 || month > 13 || day > daysInEthiopicMonth(year, month)) {
     throw new Error("Invalid Ethiopian Date");
   }
   if (era !== AMETE_ALEM && era !== AMETE_MIHRET) {
@@ -111,7 +111,7 @@ export function toGregorian(year: number, month: number, day: number, era: numbe
  * @throws 'Invalid Gregorian Date'
  */
 export function toEthiopic(year: number, month: number, day: number): Ymd {
-  if (day < 0 || month < 0 || month > 12 || day > (month >= 1 ? daysInGregorianMonth(year, month) : 31)) {
+  if (day < 1 || month < 1 || month > 12 || day > daysInGregorianMonth(year, month)) {
     throw new Error("Invalid Gregorian Date");
   }
   return jdnToEthiopic(gregorianToJdn(year, month, day));
