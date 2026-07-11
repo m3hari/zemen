@@ -208,9 +208,13 @@ describe("conversion — canonical test data", () => {
     it("supports ዓመተ ዓለም dates", () => {
       expect(Array.isArray(toGregorian(-500, 10, 10))).toBe(true);
     });
-    it("accepts day 0 and month 0 (known quirk)", () => {
-      expect(() => toGregorian(2009, 0, 0)).not.toThrow();
-      expect(() => toEthiopic(2009, 0, 0)).not.toThrow();
+    it("rejects day 0 and month 0 (B4)", () => {
+      expect(() => toGregorian(2009, 0, 0)).toThrow("Invalid Ethiopian Date");
+      expect(() => toGregorian(2009, 5, 0)).toThrow("Invalid Ethiopian Date");
+      expect(() => toGregorian(2009, 0, 5)).toThrow("Invalid Ethiopian Date");
+      expect(() => toEthiopic(2009, 0, 0)).toThrow("Invalid Gregorian Date");
+      expect(() => toEthiopic(2009, 5, 0)).toThrow("Invalid Gregorian Date");
+      expect(() => toEthiopic(2009, 0, 5)).toThrow("Invalid Gregorian Date");
     });
   });
 });

@@ -124,7 +124,7 @@ describe("names & weekdays", () => {
     expect([...MONTH_NAMES]).toEqual(full);
     expect(SHORT_MONTH_NAMES).toEqual(short);
     for (let m = 0; m <= 12; m += 1) {
-      const z = new Zemen(2015, m, 15);
+      const z = new Zemen(2015, m, 5); // day 5 exists in every month incl. ጳጉሜን
       expect(z.getMonthName()).toBe(full[m]!);
       expect(z.getShortMonthName()).toBe(short[m]!);
     }
@@ -158,6 +158,12 @@ describe("known quirks", () => {
     expect(() => Zemen.toGC(2011, 12, 30)).toThrow("Invalid Ethiopian Date");
     expect(() => Zemen.toGC(2000, 12, 6)).toThrow("Invalid Ethiopian Date"); // 2000 is not a leap year
     expect(Zemen.toGC(2011, 12, 6).toDateString()).toBe("Wed Sep 11 2019"); // 2011 is
-    expect(() => Zemen.toGC(2009, -1, 10)).not.toThrow(); // month floor: see B4
+  });
+
+  it("rejects month -1 and day 0 at the public boundary (B4)", () => {
+    expect(() => Zemen.toGC(2009, -1, 10)).toThrow("Invalid Ethiopian Date");
+    expect(() => Zemen.toGC(2009, 0, 0)).toThrow("Invalid Ethiopian Date");
+    expect(() => Zemen.toEC(2023, -1, 10)).toThrow("Invalid Gregorian Date");
+    expect(() => new Zemen(2009, -1, 10)).toThrow("Invalid Ethiopian Date");
   });
 });
