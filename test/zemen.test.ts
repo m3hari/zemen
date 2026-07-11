@@ -156,8 +156,11 @@ describe("known quirks", () => {
     expect(new Zemen(leapDay).toString()).toBe(Zemen.toEC(leapDay).toString());
   });
 
-  it("toGC maps Gregorian years 0-99 into 1900-1999 (Date constructor)", () => {
-    expect(Zemen.toGC(1, 0, 1).toDateString()).toBe("Thu Aug 27 1908");
+  it("toGC preserves Gregorian years 0-99 (B7)", () => {
+    expect(Zemen.toGC(1, 0, 1).getFullYear()).toBe(8); // EC 1-1-1 == Aug 27, 8 AD
+    expect(Zemen.toGC(85, 0, 1).getFullYear()).toBe(92);
+    // knock-on: weekday queries for small years now use the real year
+    expect(new Zemen(91, 0, 1).gc.getFullYear()).toBe(98);
   });
 
   it("rejects nonexistent ጳጉሜን days instead of spilling over (B2, issue #41)", () => {
