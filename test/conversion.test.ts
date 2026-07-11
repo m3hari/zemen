@@ -208,6 +208,14 @@ describe("conversion — canonical test data", () => {
     it("supports ዓመተ ዓለም dates", () => {
       expect(Array.isArray(toGregorian(-500, 10, 10))).toBe(true);
     });
+    it("rejects NaN and non-integer components (B5)", () => {
+      expect(() => toGregorian(NaN, 5, 5)).toThrow("Invalid Ethiopian Date");
+      expect(() => toGregorian(2009.5, 5, 5)).toThrow("Invalid Ethiopian Date");
+      expect(() => toGregorian(2009, 5.5, 5)).toThrow("Invalid Ethiopian Date");
+      expect(() => toEthiopic(NaN, 8, 2)).toThrow("Invalid Gregorian Date");
+      expect(() => toEthiopic(2017.5, 8, 2)).toThrow("Invalid Gregorian Date");
+      expect(() => toEthiopic(2017, 8, 2.5)).toThrow("Invalid Gregorian Date");
+    });
     it("rejects day 0 and month 0 (B4)", () => {
       expect(() => toGregorian(2009, 0, 0)).toThrow("Invalid Ethiopian Date");
       expect(() => toGregorian(2009, 5, 0)).toThrow("Invalid Ethiopian Date");

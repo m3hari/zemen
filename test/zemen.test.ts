@@ -19,7 +19,13 @@ describe("Zemen constructor", () => {
     expect(new Zemen("2009", "11", "27").toString()).toBe("2009-12-27");
     expect(new Zemen(2009.9, 11.2, 27.7).toString()).toBe("2009-12-27");
     expect(new Zemen("0x10", "2", "3").toString()).toBe("0-3-3"); // radix 10
-    expect(new Zemen("abc", 1, 2).toString()).toBe("NaN-2-2"); // NaN flows through
+  });
+
+  it("rejects arguments that coerce to NaN (B5)", () => {
+    expect(() => new Zemen("abc", 1, 2)).toThrow("Invalid Ethiopian Date");
+    expect(() => new Zemen(2009, "ጳጉሜ", 1)).toThrow("Invalid Ethiopian Date");
+    expect(() => (Zemen as any).toEC(NaN, 8, 2)).toThrow("Invalid Gregorian Date");
+    expect(() => (Zemen as any).toGC(2009.7, 11, 27)).toThrow("Invalid Ethiopian Date");
   });
 
   it("throws 'Invalid Argument Exception' for wrong arity or type", () => {
