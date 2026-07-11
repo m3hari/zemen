@@ -29,7 +29,7 @@
         #09090b;
     }
     input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-    input[type="number"] { -moz-appearance: textfield; }
+    input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); }
   </style>
 </head>
@@ -124,16 +124,6 @@
 <span class="text-zinc-200">Zemen.toEC(</span><span class="text-amber-200">'2017-09-02'</span><span class="text-zinc-200">)</span><span class="text-zinc-500">;</span>           <span class="text-zinc-600">// Gregorian → Ethiopian</span>
 <span class="text-zinc-200">Zemen.toGC(</span><span class="text-amber-200">'2009-12-27'</span><span class="text-zinc-200">)</span><span class="text-zinc-500">;</span>           <span class="text-zinc-600">// Ethiopian → Gregorian</span></code></pre>
     </section>
-
-    <!-- footer -->
-    <footer class="mt-14 text-center">
-      <p class="font-mono text-xs text-zinc-600">
-        MIT · <a class="transition hover:text-amber-300" href="http://www.geez.org/Calendars/">Beyene–Kudlek algorithm</a> · zero dependencies
-      </p>
-      <p class="mt-2 text-[11px] text-zinc-700">
-        Built by <a class="transition hover:text-amber-300" href="https://github.com/m3hari">መሐሪ ጌታ · m3hari</a>
-      </p>
-    </footer>
   </main>
 
   <script type="module">
