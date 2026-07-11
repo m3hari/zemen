@@ -194,7 +194,7 @@ describe("conversion — canonical test data", () => {
     it("supports ዓመተ ዓለም dates", () => {
       expect(Array.isArray(toGregorian(-500, 10, 10))).toBe(true);
     });
-    it("accepts day 0 and month 0 (preserved quirk)", () => {
+    it("accepts day 0 and month 0 (known quirk)", () => {
       expect(() => toGregorian(2009, 0, 0)).not.toThrow();
       expect(() => toEthiopic(2009, 0, 0)).not.toThrow();
     });

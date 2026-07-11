@@ -1,6 +1,6 @@
 # Zemen · ዘመን
 
-> Ethiopian ⇆ Gregorian calendar conversion & formatting — zero dependencies.
+> Ethiopian ⇆ Gregorian calendar conversion & formatting — zero dependencies, types included.
 > የኢትዮጵያ እና የግሪጎሪያን ቀን መቀያየሪያ እና መቅረጫ ላይብረሪ።
 
 [![npm version](https://img.shields.io/npm/v/zemen)](https://www.npmjs.com/package/zemen)
@@ -10,10 +10,15 @@
 [![license](https://img.shields.io/npm/l/zemen)](LICENCE.md)
 [![types included](https://img.shields.io/badge/TypeScript-types%20included-3178c6)](#typescript)
 
-Based on the [Beyene–Kudlek algorithm](http://www.geez.org/Calendars/), validated
-against the canonical conversion tables from *"The Amharic Letters of Emperor
-Theodore of Ethiopia to Queen Victoria"* (Appleyard & Girma Selasse, Oxford, 1979)
-and the Calendrica applet. **Zero runtime dependencies.**
+The Ethiopian calendar has **13 months** — twelve of 30 days plus ጳጉሜን, a
+short month of 5 or 6 days — and runs 7–8 years behind the Gregorian year.
+**Zemen** converts dates between the two calendars and formats Ethiopian
+dates with Amharic month and weekday names. ~2 KB gzipped, no dependencies,
+works everywhere (`import`, `require`, browsers via CDN).
+
+Conversion uses the [Beyene–Kudlek](http://www.geez.org/Calendars/) Julian
+Day Number algorithm, validated against canonical scholarly test data
+(Appleyard & Girma Selasse, Oxford, 1979; Calendrica).
 
 ▶ **[Try it live in the playground](https://m3hari.github.io/zemen/)**
 
@@ -25,13 +30,13 @@ npm i zemen
 bun add zemen
 ```
 
-## 30-second start
+## Quick start
 
 ```js
 // ESM
 import Zemen from 'zemen';
 
-// CommonJS — works exactly as it always has
+// CommonJS
 const Zemen = require('zemen');
 
 const zare = new Zemen();                    // today, in the Ethiopian calendar
@@ -112,41 +117,11 @@ Type declarations ship with the package for both module systems — no `@types/*
 needed:
 
 ```ts
-import Zemen from 'zemen';            // ESM  (dist/index.d.mts)
-import Zemen = require('zemen');      // CJS  (dist/index.d.cts)
+import Zemen from 'zemen';            // ESM
+import Zemen = require('zemen');      // CommonJS
 
 const z: Zemen = Zemen.toEC(new Date());
 ```
-
-## Compatibility promise
-
-0.0.8 is a full internal rewrite (TypeScript, Bun-native toolchain, dual
-ESM + CJS build) with **byte-identical observable behavior** to 0.0.7.
-Don't take that on trust — reproduce the proof:
-
-```bash
-bun install
-bun run verify   # downloads zemen@0.0.7 fresh from npm and diffs it against
-                 # this build: ~450k exhaustive conversions (1700–2300), 40k
-                 # seeded-random fuzz cases (VERIFY_SEED=<n> to pick your own),
-                 # API surface, TZ paths, and the packaged-tarball contract
-```
-
-### Known quirks (deliberately preserved)
-
-These shipped in every 0.0.x release, so they are contract. Fixes are
-breaking changes reserved for 0.1.0:
-
-- **`new Zemen(dateObject)` is one month off** and throws for December dates —
-  use `Zemen.toEC(dateObject)`, which is correct.
-- `Zemen.parse()` with falsy input returns `''`, not a `Zemen` or an error.
-- `Zemen.parse(str, pattern)` always throws — pattern parsing was never implemented.
-- `Zemen.toEC('2017-09-02')` uses native `Date` parsing, so ISO date-only
-  strings resolve in UTC and can shift a day depending on your timezone.
-- `toGC` returns `new Date(y, m, d)`, which maps Gregorian years 0–99 into 1900–1999.
-- Repeated format tokens concatenate greedily: `'YYY'` → `'092009'`, `'MMMMM'` → `'ነሐሴ12'`.
-- Validation accepts day 0, month 0 and ጳጉሜን days 7–30 (dates spill into the
-  next period), and `NaN` inputs flow through unchecked.
 
 ## Credits
 

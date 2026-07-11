@@ -1,8 +1,8 @@
 /**
  * Builds the publishable dist/ — `bun scripts/build.ts`:
  *
- *   dist/index.cjs    CJS bundle — `module.exports = Zemen`, the exact export
- *                     shape of every release since 0.0.1.
+ *   dist/index.cjs    CJS bundle — `module.exports = Zemen`, so require()
+ *                     returns the class directly.
  *   dist/index.mjs    ESM entry — re-exports the CJS bundle so `import` and
  *                     `require` consumers share ONE class identity.
  *   dist/index.d.cts  types for require()  (export = Zemen)
@@ -14,8 +14,7 @@ import { $ } from "bun";
 const root = `${import.meta.dir}/..`;
 const dist = `${root}/dist`;
 
-/** The public type surface — deliberately authored, not generated: this is
- * the 0.0.7 contract (plus `parse`, which always existed at runtime). */
+/** The public type surface — deliberately authored, not generated. */
 const DECLARATION = `type ZemenDateValue = string | number | Date | Zemen;
 
 declare class Zemen {
