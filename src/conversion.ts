@@ -26,6 +26,9 @@ const pagumeDays = (year: number): number => (year % 4 === 3 ? 6 : 5);
 const daysInEthiopicMonth = (year: number, month: number): number =>
   month === 13 ? pagumeDays(year) : 30;
 
+const daysInGregorianMonth = (year: number, month: number): number =>
+  month === 2 && isGregorianLeap(year) ? 29 : MONTH_DAYS[month]!;
+
 export type Ymd = [year: number, month: number, day: number];
 
 function ethiopicToJdn(year: number, month: number, day: number, era: number): number {
@@ -80,12 +83,11 @@ function jdnToGregorian(jdn: number): Ymd {
   // non-leap century years — 1900, 2100 — and misplaced the 1st of Feb-Nov.)
   let month = 1;
   for (let m = 1; m <= 12; m += 1) {
-    const daysInMonth = m === 2 && isGregorianLeap(year) ? 29 : MONTH_DAYS[m]!;
-    if (n <= daysInMonth) {
+    if (n <= daysInGregorianMonth(year, m)) {
       month = m;
       break;
     }
-    n -= daysInMonth;
+    n -= daysInGregorianMonth(year, m);
   }
   return [year, month, n];
 }
@@ -109,7 +111,7 @@ export function toGregorian(year: number, month: number, day: number, era: numbe
  * @throws 'Invalid Gregorian Date'
  */
 export function toEthiopic(year: number, month: number, day: number): Ymd {
-  if (day < 0 || day > 31 || month < 0 || month > 12) {
+  if (day < 0 || month < 0 || month > 12 || day > (month >= 1 ? daysInGregorianMonth(year, month) : 31)) {
     throw new Error("Invalid Gregorian Date");
   }
   return jdnToEthiopic(gregorianToJdn(year, month, day));
