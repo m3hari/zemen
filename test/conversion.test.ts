@@ -195,6 +195,13 @@ describe("conversion — canonical test data", () => {
       expect(() => toEthiopic(2009, 14, 15)).toThrow("Invalid Gregorian Date");
       expect(() => toEthiopic(2009, 9, 32)).toThrow("Invalid Gregorian Date");
     });
+    it("rejects nonexistent Gregorian days (B3)", () => {
+      expect(() => toEthiopic(2023, 2, 29)).toThrow("Invalid Gregorian Date"); // non-leap Feb
+      expect(() => toEthiopic(2023, 4, 31)).toThrow("Invalid Gregorian Date"); // Apr has 30
+      expect(() => toEthiopic(1900, 2, 29)).toThrow("Invalid Gregorian Date"); // century non-leap
+      expect(() => toEthiopic(2024, 2, 29)).not.toThrow(); // leap year
+      expect(() => toEthiopic(2000, 2, 29)).not.toThrow(); // leap century
+    });
     it("rejects unknown eras", () => {
       expect(() => toGregorian(2009, 10, 10, 25)).toThrow("Unknown Era:");
     });
