@@ -121,12 +121,32 @@ const z: Zemen = Zemen.toEC(new Date());
 ## Compatibility promise
 
 0.0.8 is a full internal rewrite (TypeScript, Bun-native toolchain, dual
-ESM + CJS build) with **byte-identical observable behavior** to 0.0.7 —
-verified by replaying 87,000+ golden-master fixtures generated from the
-previously published package, exhaustive day-by-day comparison across six
-centuries, and randomized differential fuzzing. See [VERIFICATION.md](VERIFICATION.md)
-to reproduce the proof yourself, and [POTENTIAL-IMPROVEMENTS.md](POTENTIAL-IMPROVEMENTS.md)
-for known quirks that were deliberately preserved.
+ESM + CJS build) with **byte-identical observable behavior** to 0.0.7.
+Don't take that on trust — reproduce the proof:
+
+```bash
+bun install
+bun run verify   # downloads zemen@0.0.7 fresh from npm and diffs it against
+                 # this build: ~450k exhaustive conversions (1700–2300), 40k
+                 # seeded-random fuzz cases (VERIFY_SEED=<n> to pick your own),
+                 # API surface, TZ paths, and the packaged-tarball contract
+```
+
+### Known quirks (deliberately preserved)
+
+These shipped in every 0.0.x release, so they are contract. Fixes are
+breaking changes reserved for 0.1.0:
+
+- **`new Zemen(dateObject)` is one month off** and throws for December dates —
+  use `Zemen.toEC(dateObject)`, which is correct.
+- `Zemen.parse()` with falsy input returns `''`, not a `Zemen` or an error.
+- `Zemen.parse(str, pattern)` always throws — pattern parsing was never implemented.
+- `Zemen.toEC('2017-09-02')` uses native `Date` parsing, so ISO date-only
+  strings resolve in UTC and can shift a day depending on your timezone.
+- `toGC` returns `new Date(y, m, d)`, which maps Gregorian years 0–99 into 1900–1999.
+- Repeated format tokens concatenate greedily: `'YYY'` → `'092009'`, `'MMMMM'` → `'ነሐሴ12'`.
+- Validation accepts day 0, month 0 and ጳጉሜን days 7–30 (dates spill into the
+  next period), and `NaN` inputs flow through unchecked.
 
 ## Credits
 

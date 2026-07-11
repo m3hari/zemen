@@ -1,8 +1,9 @@
-const JD_EPOCH_OFFSET_AMETE_ALEM = -285019; //      ዓ/ዓ    
-const JD_EPOCH_OFFSET_AMETE_MIHRET = 1723856; //    ዓ/ም
+import { describe, expect, it } from "bun:test";
+import { AMETE_ALEM, AMETE_MIHRET, toEthiopic, toGregorian } from "../src/conversion";
+
 
 /**
- * TEST CASE 
+ * TEST CASE
  * Adopted from http://www.geez.org/Calendars/EthiopicCalendarTest.java
  *
  * */
@@ -16,9 +17,9 @@ const JD_EPOCH_OFFSET_AMETE_MIHRET = 1723856; //    ዓ/ም
 
 /* Test dates from:
  * "The Amharic Letters of Emperor Theodore of Ethiopia to Queen Victoria and
- * Her Special Envoy", David Appleyard, Girma Selasse Asfaw, Oxford University Press, 
+ * Her Special Envoy", David Appleyard, Girma Selasse Asfaw, Oxford University Press,
  * June 1 1979, ISBN: 0856726605, Longwood Pr Ltd
- *  
+ *
  * Ethiopic      Gregorian     JDN
  * 20/02/1855    29/10/1862    2401443
  * 29/10/1857    05/07/1865    2402423
@@ -26,16 +27,16 @@ const JD_EPOCH_OFFSET_AMETE_MIHRET = 1723856; //    ዓ/ም
  * 10/08/1858    17/04/1866    2402709
  * 28/04/1859    05/01/1867    2402972
  * 05/05/1860    13/01/1868    2403345
- * 
+ *
  * --------------------------------------------------
  * Theses dates are taken from Calendrica applet:
  *   http://emr.cs.iit.edu/home/reingold/calendar-book/Calendrica.html
- * 
+ *
  * Ethiopic      Gregorian       JDN
  * 07/05/5492    01/01/0000    1721060
  * 08/05/5493    01/01/0001    1721426
  * 06/13/5499    27/08/0007    1723855
- * 
+ *
  * 01/01/5500    28/08/0007    1723856
  * 02/01/5500    29/08/0007    1723857
  * 01/01/0001    27/08/0008    1724221
@@ -48,16 +49,16 @@ const JD_EPOCH_OFFSET_AMETE_MIHRET = 1723856; //    ዓ/ም
  * 05/13/0003    26/08/0011    1725315
  * 06/13/0003    27/08/0011    1725316  first ethiopian leap year
  * 05/13/0004    26/08/0012    1725561
- * 
+ *
  * 06/02/1575    13/10/1582    2299159
  * 07/02/1575    14/10/1582    2299160  Julian 04/10/1582
  * 08/02/1575    15/10/1582    2299161
  * 09/02/1575    16/10/1582    2299162
- * 
+ *
  * 23/04/1892    01/01/1900    2415021
  * 23/04/1997    01/01/2005    2453372
  * 05/13/2000    10/09/2008    2454720
- * 
+ *
  * 22/04/1893    31/12/1900    2415385
  * 22/04/1985    31/12/1992    2448988
  * 22/04/1989    31/12/1996    2450449
@@ -69,10 +70,6 @@ const JD_EPOCH_OFFSET_AMETE_MIHRET = 1723856; //    ዓ/ም
  * 22/03/5993    31/12/6000    3912880
  */
 
-import { describe, expect, it } from 'bun:test';
-import { Converter as zemen } from './_lib';
-
-
 const EthiopicDays = [
     // Dates from "Emporer Theodore..."
     // ETHIOPIC      //     GREGORIAN
@@ -83,16 +80,16 @@ const EthiopicDays = [
     [2402972, 1859, 4, 28], //  [1867,  1,  5]
     [2403345, 1860, 5, 5], //  [1868,  1, 13]
     // Miscellaneous dates that test some corner cases:
-    // [1721060, 5492, 5, 7, JD_EPOCH_OFFSET_AMETE_ALEM], //  [   0,  1,  1]
-    [1721426, 5493, 5, 8, JD_EPOCH_OFFSET_AMETE_ALEM], //  [   1,  1,  1]
-    [1723855, 5499, 13, 6, JD_EPOCH_OFFSET_AMETE_ALEM], //  [   7,  8, 27]
+    // [1721060, 5492, 5, 7, AMETE_ALEM], //  [   0,  1,  1]
+    [1721426, 5493, 5, 8, AMETE_ALEM], //  [   1,  1,  1]
+    [1723855, 5499, 13, 6, AMETE_ALEM], //  [   7,  8, 27]
 
-    [1723856, 5500, 1, 1, JD_EPOCH_OFFSET_AMETE_ALEM], //  [   7,  8, 28]
-    [1723857, 5500, 1, 2, JD_EPOCH_OFFSET_AMETE_ALEM], //  [   7,  8, 29]
+    [1723856, 5500, 1, 1, AMETE_ALEM], //  [   7,  8, 28]
+    [1723857, 5500, 1, 2, AMETE_ALEM], //  [   7,  8, 29]
     [1724221, 1, 1, 1], //  [   8,  8, 27]
     [1724586, 2, 1, 1], //  [   9,  8, 27]
     [1724951, 3, 1, 1], //  [  10,  8, 27]
-    [1724220, 5500, 13, 5, JD_EPOCH_OFFSET_AMETE_ALEM], //  [   8,  8, 26]
+    [1724220, 5500, 13, 5, AMETE_ALEM], //  [   8,  8, 26]
     [1724585, 1, 13, 5], //  [   9,  8, 26]
     [1724950, 2, 13, 5], //  [  10,  8, 26]
     [1725315, 3, 13, 5], //  [  11,  8, 26]
@@ -113,7 +110,6 @@ const EthiopicDays = [
     [3182395, 3993, 4, 7], //  [4000, 12, 31]
     [3912880, 5993, 3, 22], //  [6000, 12, 31]
 ];
-
 
 const GregorianDays = [
     // Dates from "Emporer Theodore..."
@@ -158,67 +154,49 @@ const GregorianDays = [
     [3912880, 6000, 12, 31], //  [5993,  3, 22]
 ];
 
-
-function testToGregorian(testCaseIndex: number) {
-    const ecDate = EthiopicDays[testCaseIndex];
-    const gcDate = GregorianDays[testCaseIndex];
-
-    it(`should  convert ${ecDate} E.C to ${gcDate} G.C`, () => {
-        let query: number[];
-        if (ecDate.length === 5) {
-            query = [ecDate[1], ecDate[2], ecDate[3], ecDate[4]];
-        } else {
-            query = [ecDate[1], ecDate[2], ecDate[3], JD_EPOCH_OFFSET_AMETE_MIHRET];
-        }
-        const expected = [gcDate[1], gcDate[2], gcDate[3]];
-        const actual: number[] = zemen.toGC(query);
-        expect(actual).toEqual(expected);
+describe("conversion — canonical test data", () => {
+  describe("Ethiopian → Gregorian", () => {
+    EthiopicDays.forEach((ec, i) => {
+      const gc = GregorianDays[i]!;
+      it(`converts ${ec.slice(1, 4)} E.C to ${gc.slice(1, 4)} G.C`, () => {
+        const actual: number[] = toGregorian(ec[1]!, ec[2]!, ec[3]!, ec[4] ?? AMETE_MIHRET);
+        expect(actual).toEqual([gc[1]!, gc[2]!, gc[3]!]);
+      });
     });
-}
+  });
 
-function testToEthiopian(testCaseIndex: number) {
-    const gcDate = GregorianDays[testCaseIndex];
-    const ecDate = EthiopicDays[testCaseIndex];
+  describe("Gregorian → Ethiopian", () => {
+    GregorianDays.forEach((gc, i) => {
+      const ec = EthiopicDays[i]!;
+      it(`converts ${gc.slice(1, 4)} G.C to ${ec.slice(1, 4)} E.C`, () => {
+        const actual: number[] = toEthiopic(gc[1]!, gc[2]!, gc[3]!);
+        expect(actual).toEqual([ec[1]!, ec[2]!, ec[3]!]);
+      });
+    });
+  });
 
-    it(`should  convert ${gcDate} G.C to ${ecDate} E.C`, () => {
-        const query = [gcDate[1], gcDate[2], gcDate[3]];
-        const expected = [ecDate[1], ecDate[2], ecDate[3]];
-        const actual: number[] = zemen.toEC(query);
-        expect(actual).toEqual(expected);
+  describe("validation", () => {
+    it("rejects invalid Ethiopian dates", () => {
+      expect(() => toGregorian(2009, 9, -1)).toThrow("Invalid Ethiopian Date");
+      expect(() => toGregorian(2009, -2, 32)).toThrow("Invalid Ethiopian Date");
+      expect(() => toGregorian(2009, 14, 1)).toThrow("Invalid Ethiopian Date");
+      expect(() => toGregorian(2009, 9, 31)).toThrow("Invalid Ethiopian Date");
     });
-}
-
-describe('Zemen', () => {
-
-    describe('Converting Gregorian date to Ethiopian date', () => {
-        for (let i = 0; i < EthiopicDays.length; i += 1) {
-            testToEthiopian(i);
-        }
+    it("rejects invalid Gregorian dates", () => {
+      expect(() => toEthiopic(2009, 13, -1)).toThrow("Invalid Gregorian Date");
+      expect(() => toEthiopic(2009, -2, 32)).toThrow("Invalid Gregorian Date");
+      expect(() => toEthiopic(2009, 14, 15)).toThrow("Invalid Gregorian Date");
+      expect(() => toEthiopic(2009, 9, 32)).toThrow("Invalid Gregorian Date");
     });
-    describe('Converting Ethiopian date to Gregorian date', () => {
-        for (let i = 0; i < GregorianDays.length; i += 1) {
-            testToGregorian(i);
-        }
+    it("rejects unknown eras", () => {
+      expect(() => toGregorian(2009, 10, 10, 25)).toThrow("Unknown Era:");
     });
-    describe('Exceptions', () => {
-        it('Converting Invalid Ethiopina date to Gregorian date Should throw Invalid Ethiopian Date Exception', () => {
-            expect(() => { zemen.toGC([2009, 9, -1]); }).toThrow();
-            expect(() => { zemen.toGC([2009, -2, 32]); }).toThrow();
-            expect(() => { zemen.toGC([2009, 14, 1]); }).toThrow();
-            expect(() => { zemen.toGC([2009, 9, 31]); }).toThrow();
-        });
-        it('Converting Invalid Gregorian date to Ethiopian date Should throw Invalid Gregorian Date Exception', () => {
-            expect(() => { zemen.toEC([2009, 13, -1]); }).toThrow();
-            expect(() => { zemen.toEC([2009, -2, 32]); }).toThrow();
-            expect(() => { zemen.toEC([2009, 14, 15]); }).toThrow();
-            expect(() => { zemen.toEC([2009, 9, 32]); }).toThrow();
-        });
-        it('toGC should throw error if invalid era passed', () => {
-            expect(() => { zemen.toGC([2009, 10, 10, 25]); }).toThrow();
-        });
-        it('toGC should support AMETE_ALEM dates', () => {
-            const res = zemen.toGC([-500, 10, 10]);
-            expect(Array.isArray(res)).toBe(true);
-        });
+    it("supports ዓመተ ዓለም dates", () => {
+      expect(Array.isArray(toGregorian(-500, 10, 10))).toBe(true);
     });
+    it("accepts day 0 and month 0 (preserved quirk)", () => {
+      expect(() => toGregorian(2009, 0, 0)).not.toThrow();
+      expect(() => toEthiopic(2009, 0, 0)).not.toThrow();
+    });
+  });
 });

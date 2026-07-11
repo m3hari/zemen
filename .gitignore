@@ -15,3 +15,6 @@ coverage/
 # editors
 .vscode/
 .idea/
+
+# local working notes
+plan.md

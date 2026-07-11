@@ -1,33 +1,11 @@
-export const WEEK_NAMES = ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሓሙስ", "ዓርብ", "ቅዳሜ"];
+/** Amharic weekday and month names. */
 
-export const MONTHS_NAMES = [
-  "መስከረም",
-  "ጥቅምት",
-  "ኅዳር",
-  "ታኅሣሥ",
-  "ጥር",
-  "የካቲት",
-  "መጋቢት",
-  "ሚያዝያ",
-  "ግንቦት",
-  "ሰኔ",
-  "ሐምሌ",
-  "ነሐሴ",
-  "ጳጉሜን"
+export const WEEKDAY_NAMES = ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሓሙስ", "ዓርብ", "ቅዳሜ"];
+
+export const MONTH_NAMES = [
+  "መስከረም", "ጥቅምት", "ኅዳር", "ታኅሣሥ", "ጥር", "የካቲት", "መጋቢት",
+  "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜን",
 ];
 
-export const SHORT_MONTHS_NAMES = [
-  "መስከ",
-  "ጥቅም",
-  "ኅዳር",
-  "ታኅሣ",
-  "ጥር",
-  "የካቲ",
-  "መጋቢ",
-  "ሚያዝ",
-  "ግንቦ",
-  "ሰኔ",
-  "ሐምሌ",
-  "ነሐሴ",
-  "ጳጉሜ"
-];
+/** Short month names are the first three characters of the full name. */
+export const SHORT_MONTH_NAMES = MONTH_NAMES.map((name) => name.slice(0, 3));
