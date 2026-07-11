@@ -170,6 +170,18 @@ describe("known quirks", () => {
     expect(Zemen.toGC(2011, 12, 6).toDateString()).toBe("Wed Sep 11 2019"); // 2011 is
   });
 
+  it("rejects Gregorian dates before the ዓመተ ምሕረት epoch (B10)", () => {
+    // EC 1-1-1 is Aug 27, 8 AD; earlier inputs used to produce instances
+    // whose .gc field was ~5500 years off (the era information was lost).
+    expect(() => Zemen.toEC(7, 7, 28)).toThrow("Invalid Gregorian Date");
+    expect(() => Zemen.toEC(8, 7, 26)).toThrow("Invalid Gregorian Date");
+    expect(Zemen.toEC(8, 7, 27).toString()).toBe("1-1-1");
+    expect(Zemen.toEC(8, 7, 27).gc.getFullYear()).toBe(8); // .gc consistent again
+    const early = new Date(2000, 7, 28);
+    early.setFullYear(7);
+    expect(() => new Zemen(early)).toThrow("Invalid Gregorian Date");
+  });
+
   it("rejects month -1 and day 0 at the public boundary (B4)", () => {
     expect(() => Zemen.toGC(2009, -1, 10)).toThrow("Invalid Ethiopian Date");
     expect(() => Zemen.toGC(2009, 0, 0)).toThrow("Invalid Ethiopian Date");

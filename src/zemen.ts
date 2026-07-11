@@ -61,25 +61,29 @@ export class Zemen {
 
   /** Gregorian → Ethiopian: accepts `(dateString)`, `(date)`, or `(year, month, day)`. */
   static toEC(val: ZemenDateValue, month?: number, day?: number): Zemen {
-    let e: Ymd;
+    let g: Ymd;
     if (arguments.length === 3) {
-      e = toEthiopic(val as number, (month as number) + 1, day as number);
+      g = [val as number, (month as number) + 1, day as number];
     } else if (arguments.length === 1 && typeof val === "string") {
       // Native parsing treats date-only ISO strings as UTC midnight, which
       // shifts the day in negative-UTC timezones; read them as plain calendar
       // dates instead (and let validation see the raw components).
       const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(val);
-      if (iso) {
-        e = toEthiopic(+iso[1]!, +iso[2]!, +iso[3]!);
-      } else {
-        const gc = new Date(val);
-        e = toEthiopic(gc.getFullYear(), gc.getMonth() + 1, gc.getDate());
-      }
+      const gc = iso ? null : new Date(val);
+      g = iso
+        ? [+iso[1]!, +iso[2]!, +iso[3]!]
+        : [gc!.getFullYear(), gc!.getMonth() + 1, gc!.getDate()];
     } else if (arguments.length === 1 && val instanceof Date) {
-      e = toEthiopic(val.getFullYear(), val.getMonth() + 1, val.getDate());
+      g = [val.getFullYear(), val.getMonth() + 1, val.getDate()];
     } else {
       throw new Error("Invalid Argument Exception");
     }
+    // EC 1-1-1 ዓ/ም is Aug 27, 8 AD. Earlier dates belong to the ዓመተ ዓለም era,
+    // which this API does not expose — reject rather than mislabel the year.
+    if (g[0] < 8 || (g[0] === 8 && (g[1] < 8 || (g[1] === 8 && g[2] < 27)))) {
+      throw new Error("Invalid Gregorian Date");
+    }
+    const e = toEthiopic(g[0], g[1], g[2]);
     return new Zemen(e[0], e[1] - 1, e[2]);
   }
 
