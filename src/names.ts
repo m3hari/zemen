@@ -1,6 +1,6 @@
-const WEEK_NAMES = ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሓሙስ", "ዓርብ", "ቅዳሜ"];
+export const WEEK_NAMES = ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሓሙስ", "ዓርብ", "ቅዳሜ"];
 
-const MONTHS_NAMES = [
+export const MONTHS_NAMES = [
   "መስከረም",
   "ጥቅምት",
   "ኅዳር",
@@ -16,7 +16,7 @@ const MONTHS_NAMES = [
   "ጳጉሜን"
 ];
 
-const SHORT_MONTHS_NAMES = [
+export const SHORT_MONTHS_NAMES = [
   "መስከ",
   "ጥቅም",
   "ኅዳር",
@@ -31,9 +31,3 @@ const SHORT_MONTHS_NAMES = [
   "ነሐሴ",
   "ጳጉሜ"
 ];
-
-module.exports = {
-  WEEK_NAMES,
-  MONTHS_NAMES,
-  SHORT_MONTHS_NAMES
-};
