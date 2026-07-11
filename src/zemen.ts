@@ -15,6 +15,9 @@ export class Zemen {
   /** Gregorian equivalent; backs the weekday queries. */
   readonly gc: Date;
 
+  constructor();
+  constructor(val: string | Date);
+  constructor(year: number | string, month: number | string, day: number | string);
   constructor(val?: ZemenDateValue, month?: number | string, day?: number | string) {
     if (arguments.length === 0) {
       const today = Zemen.toEC(new Date());
@@ -42,6 +45,8 @@ export class Zemen {
   }
 
   /** Ethiopian → Gregorian: accepts `('y-m-d')`, `(zemen)`, or `(year, month, day)`. */
+  static toGC(val: string | Zemen): Date;
+  static toGC(year: number, month: number, day: number): Date;
   static toGC(val: ZemenDateValue, month?: number, day?: number): Date {
     let g: Ymd;
     if (arguments.length === 3) {
@@ -60,6 +65,8 @@ export class Zemen {
   }
 
   /** Gregorian → Ethiopian: accepts `(dateString)`, `(date)`, or `(year, month, day)`. */
+  static toEC(val: string | Date): Zemen;
+  static toEC(year: number, month: number, day: number): Zemen;
   static toEC(val: ZemenDateValue, month?: number, day?: number): Zemen {
     let g: Ymd;
     if (arguments.length === 3) {
@@ -88,6 +95,7 @@ export class Zemen {
   }
 
   /** Parse an Ethiopian `'y-m-d'` string. */
+  static parse(dateString: string, pattern?: string): Zemen;
   static parse(dateString?: string | null, pattern?: string): Zemen {
     if (!dateString) {
       throw new Error(`ParsingError: Can't parse ${dateString}`);

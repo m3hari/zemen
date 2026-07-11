@@ -15,12 +15,14 @@ const root = `${import.meta.dir}/..`;
 const dist = `${root}/dist`;
 
 /** The public type surface — deliberately authored, not generated. */
-const DECLARATION = `type ZemenDateValue = string | number | Date | Zemen;
-
-declare class Zemen {
-  constructor(val?: ZemenDateValue, month?: number, day?: number);
-  static toGC(val: ZemenDateValue, month?: number, day?: number): Date;
-  static toEC(val: ZemenDateValue, month?: number, day?: number): Zemen;
+const DECLARATION = `declare class Zemen {
+  constructor();
+  constructor(val: string | Date);
+  constructor(year: number | string, month: number | string, day: number | string);
+  static toGC(val: string | Zemen): Date;
+  static toGC(year: number, month: number, day: number): Date;
+  static toEC(val: string | Date): Zemen;
+  static toEC(year: number, month: number, day: number): Zemen;
   static parse(dateString: string, pattern?: string): Zemen;
   format(pattern?: string): string;
   toString(): string;
