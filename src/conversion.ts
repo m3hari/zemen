@@ -20,6 +20,12 @@ const isGregorianLeap = (year: number): boolean =>
 /** Days per Gregorian month, 1-indexed; February resolved per leap year at use. */
 const MONTH_DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] as const;
 
+/** Days in ጳጉሜን: 6 in Ethiopian leap years (year % 4 === 3), else 5. */
+const pagumeDays = (year: number): number => (year % 4 === 3 ? 6 : 5);
+
+const daysInEthiopicMonth = (year: number, month: number): number =>
+  month === 13 ? pagumeDays(year) : 30;
+
 export type Ymd = [year: number, month: number, day: number];
 
 function ethiopicToJdn(year: number, month: number, day: number, era: number): number {
@@ -89,7 +95,7 @@ function jdnToGregorian(jdn: number): Ymd {
  * @throws 'Invalid Ethiopian Date' | 'Unknown Era:'
  */
 export function toGregorian(year: number, month: number, day: number, era: number = AMETE_MIHRET): Ymd {
-  if (day < 0 || day > 30 || month < 0 || month > 13) {
+  if (day < 0 || month < 0 || month > 13 || day > (month >= 1 && month <= 13 ? daysInEthiopicMonth(year, month) : 30)) {
     throw new Error("Invalid Ethiopian Date");
   }
   if (era !== AMETE_ALEM && era !== AMETE_MIHRET) {
