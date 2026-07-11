@@ -60,7 +60,7 @@ describe("Zemen.toEC (Gregorian → Ethiopian)", () => {
   it("throws 'Invalid Argument Exception' for wrong arity or type", () => {
     expect(() => (Zemen as any).toEC(2009, 5, 15, 15)).toThrow("Invalid Argument Exception");
     expect(() => (Zemen as any).toEC(null)).toThrow("Invalid Argument Exception");
-    expect(() => Zemen.toEC(undefined)).toThrow("Invalid Argument Exception");
+    expect(() => (Zemen as any).toEC(undefined)).toThrow("Invalid Argument Exception");
     expect(() => (Zemen as any).toEC({})).toThrow("Invalid Argument Exception");
   });
 });
@@ -85,7 +85,7 @@ describe("Zemen.toGC (Ethiopian → Gregorian)", () => {
   it("throws 'Invalid Argument Exception' for wrong arity or type", () => {
     expect(() => (Zemen as any).toGC(2009, 5, 15, 15)).toThrow("Invalid Argument Exception");
     expect(() => (Zemen as any).toGC(null)).toThrow("Invalid Argument Exception");
-    expect(() => Zemen.toGC(undefined)).toThrow("Invalid Argument Exception");
+    expect(() => (Zemen as any).toGC(undefined)).toThrow("Invalid Argument Exception");
     expect(() => (Zemen as any).toGC({})).toThrow("Invalid Argument Exception");
   });
 });
@@ -121,7 +121,7 @@ describe("names & weekdays", () => {
   it("month names, full and short, for all 13 months", () => {
     const full = ["መስከረም", "ጥቅምት", "ኅዳር", "ታኅሣሥ", "ጥር", "የካቲት", "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜን"];
     const short = ["መስከ", "ጥቅም", "ኅዳር", "ታኅሣ", "ጥር", "የካቲ", "መጋቢ", "ሚያዝ", "ግንቦ", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜ"];
-    expect(MONTH_NAMES).toEqual(full);
+    expect([...MONTH_NAMES]).toEqual(full);
     expect(SHORT_MONTH_NAMES).toEqual(short);
     for (let m = 0; m <= 12; m += 1) {
       const z = new Zemen(2015, m, 15);
@@ -133,7 +133,7 @@ describe("names & weekdays", () => {
   it("weekday names across a full week", () => {
     // 2009-12-21 E.C is a Sunday (እሑድ)
     const week = ["እሑድ", "ሰኞ", "ማክሰኞ", "ረቡዕ", "ሓሙስ", "ዓርብ", "ቅዳሜ"];
-    expect(WEEKDAY_NAMES).toEqual(week);
+    expect([...WEEKDAY_NAMES]).toEqual(week);
     for (let i = 0; i < 7; i += 1) {
       const z = new Zemen(2009, 11, 21 + i);
       expect(z.getDayOfWeek()).toBe(week[i]!);

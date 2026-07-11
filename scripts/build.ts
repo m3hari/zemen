@@ -19,31 +19,19 @@ const dist = `${root}/dist`;
 const DECLARATION = `type ZemenDateValue = string | number | Date | Zemen;
 
 declare class Zemen {
-    constructor(val?: ZemenDateValue, month?: number, day?: number);
-
-    static toGC(val: ZemenDateValue, month?: number, day?: number): Date;
-
-    static toEC(val: ZemenDateValue, month?: number, day?: number): Zemen;
-
-    static parse(dateString: string, pattern?: string): Zemen;
-
-    format(pattern?: string): string;
-
-    toString(): string;
-
-    getDate(): number;
-
-    getMonth(): number;
-
-    getFullYear(): number;
-
-    getMonthName(): string;
-
-    getShortMonthName(): string;
-
-    getDayOfWeek(): string;
-
-    getGCWeekDay(): number;
+  constructor(val?: ZemenDateValue, month?: number, day?: number);
+  static toGC(val: ZemenDateValue, month?: number, day?: number): Date;
+  static toEC(val: ZemenDateValue, month?: number, day?: number): Zemen;
+  static parse(dateString: string, pattern?: string): Zemen;
+  format(pattern?: string): string;
+  toString(): string;
+  getDate(): number;
+  getMonth(): number;
+  getFullYear(): number;
+  getMonthName(): string;
+  getShortMonthName(): string;
+  getDayOfWeek(): string;
+  getGCWeekDay(): number;
 }
 `;
 
@@ -63,7 +51,7 @@ if ("default" in Zemen || "__esModule" in Zemen) {
 }
 
 for (const file of ["index.cjs", "index.mjs", "index.d.cts", "index.d.mts"]) {
-  const bytes = (await Bun.file(`${dist}/${file}`).arrayBuffer()).byteLength;
-  const gz = Bun.gzipSync(new Uint8Array(await Bun.file(`${dist}/${file}`).arrayBuffer())).byteLength;
-  console.log(`dist/${file.padEnd(11)} ${String(bytes).padStart(6)} B  (${gz} B gzipped)`);
+  const bytes = new Uint8Array(await Bun.file(`${dist}/${file}`).arrayBuffer());
+  const gz = Bun.gzipSync(bytes).byteLength;
+  console.log(`dist/${file.padEnd(11)} ${String(bytes.byteLength).padStart(6)} B  (${gz} B gzipped)`);
 }

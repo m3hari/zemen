@@ -1,4 +1,13 @@
-import type { Zemen } from "./zemen";
+/** The date surface the formatter reads; `Zemen` satisfies it structurally. */
+export interface Formattable {
+  getFullYear(): number;
+  getMonth(): number;
+  getDate(): number;
+  getMonthName(): string;
+  getShortMonthName(): string;
+  getDayOfWeek(): string;
+  getGCWeekDay(): number;
+}
 
 /** Two-digit zero-pad of `value % 100`. */
 const pad2 = (value: number): string => {
@@ -7,7 +16,7 @@ const pad2 = (value: number): string => {
 };
 
 /** Format tokens, longest first — the scanner is greedy per position. */
-const TOKENS: [token: string, render: (z: Zemen) => string][] = [
+const TOKENS: [token: string, render: (date: Formattable) => string][] = [
   ["YYYY", (z) => `${z.getFullYear()}`],
   ["YY", (z) => pad2(z.getFullYear())],
   ["Y", (z) => `${z.getFullYear()}`],
@@ -24,15 +33,15 @@ const TOKENS: [token: string, render: (z: Zemen) => string][] = [
 ];
 
 /** Render `pattern`, replacing tokens and copying every other character through. */
-export function formatWithTokens(zemen: Zemen, pattern: string): string {
+export function formatWithTokens(date: Formattable, pattern: string): string {
   let out = "";
   for (let i = 0; i < pattern.length; ) {
     const token = TOKENS.find(([t]) => pattern.startsWith(t, i));
     if (token) {
-      out += token[1](zemen);
+      out += token[1](date);
       i += token[0].length;
     } else {
-      out += pattern[i];
+      out += pattern[i]!;
       i += 1;
     }
   }

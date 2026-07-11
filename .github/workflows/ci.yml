@@ -20,7 +20,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run typecheck
-      - run: bun test
+      - run: bun test --coverage
       # live parity proof vs a fresh registry download of zemen@0.0.7,
       # plus the dual-package contract on the real tarball
       - run: bun run verify

@@ -127,38 +127,38 @@ const pick = <T>(arr: T[]): T => arr[Math.floor(rnd() * arr.length)]!;
 {
   console.log(`fuzzing with seed ${seed} (override with VERIFY_SEED=<n>)`);
   const tokens = ["Y", "M", "D", "d", "e", "E", "-", "/", " ", "ቀን", "፣", "ዓ", "x", "!", "2"];
+  const runners: (() => boolean)[] = [
+    () => {
+      const [y, m, d] = [ri(-100, 6500), ri(-3, 15), ri(-3, 35)];
+      return same(`toEC(${y},${m},${d})`, (Z) => Z.toEC(y, m, d).toString());
+    },
+    () => {
+      const [y, m, d] = [ri(-100, 6500), ri(-3, 15), ri(-3, 35)];
+      return same(`toGC(${y},${m},${d})`, (Z) => Z.toGC(y, m, d).toDateString());
+    },
+    () => {
+      const [y, m, d] = [ri(1, 3000), ri(-2, 14), ri(-2, 32)];
+      return same(`ctor(${y},${m},${d})`, (Z) => new Z(y, m, d).toString());
+    },
+    () => {
+      // exercises the preserved Date-ctor off-by-one bug, incl. December throws
+      const [y, m, d] = [ri(1900, 2100), ri(0, 11), ri(1, 31)];
+      return same(`ctor(Date(${y},${m},${d}))`, (Z) => new Z(new Date(y, m, d)).toString());
+    },
+    () => {
+      const [y, m, d] = [ri(1, 3000), ri(0, 12), ri(1, 30)];
+      const p = Array.from({ length: ri(1, 14) }, () => pick(tokens)).join("");
+      return same(`format(${y},${m},${d},${JSON.stringify(p)})`, (Z) => new Z(y, m, d).format(p));
+    },
+    () => {
+      const s = Array.from({ length: ri(0, 4) }, () => `${ri(-9, 3000)}`).join("-");
+      return same(`parse(${JSON.stringify(s)})`, (Z) => String(Z.parse(s)));
+    },
+  ];
   let bad = 0;
   const N = 40000;
   for (let i = 0; i < N; i++) {
-    const ok = [
-      () => {
-        const [y, m, d] = [ri(-100, 6500), ri(-3, 15), ri(-3, 35)];
-        return same(`toEC(${y},${m},${d})`, (Z) => Z.toEC(y, m, d).toString());
-      },
-      () => {
-        const [y, m, d] = [ri(-100, 6500), ri(-3, 15), ri(-3, 35)];
-        return same(`toGC(${y},${m},${d})`, (Z) => Z.toGC(y, m, d).toDateString());
-      },
-      () => {
-        const [y, m, d] = [ri(1, 3000), ri(-2, 14), ri(-2, 32)];
-        return same(`ctor(${y},${m},${d})`, (Z) => new Z(y, m, d).toString());
-      },
-      () => {
-        // exercises the preserved Date-ctor off-by-one bug, incl. December throws
-        const [y, m, d] = [ri(1900, 2100), ri(0, 11), ri(1, 31)];
-        return same(`ctor(Date(${y},${m},${d}))`, (Z) => new Z(new Date(y, m, d)).toString());
-      },
-      () => {
-        const [y, m, d] = [ri(1, 3000), ri(0, 12), ri(1, 30)];
-        const p = Array.from({ length: ri(1, 14) }, () => pick(tokens)).join("");
-        return same(`format(${y},${m},${d},${JSON.stringify(p)})`, (Z) => new Z(y, m, d).format(p));
-      },
-      () => {
-        const s = Array.from({ length: ri(0, 4) }, () => `${ri(-9, 3000)}`).join("-");
-        return same(`parse(${JSON.stringify(s)})`, (Z) => String(Z.parse(s)));
-      },
-    ][i % 6]!();
-    if (!ok) bad += 1;
+    if (!runners[i % runners.length]!()) bad += 1;
   }
   report("V3 randomized fuzz", bad === 0, `${N} random cases (seed ${seed}), ${bad} mismatches`);
 }
