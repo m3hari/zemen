@@ -69,7 +69,8 @@ const JD_EPOCH_OFFSET_AMETE_MIHRET = 1723856; //    ዓ/ም
  * 22/03/5993    31/12/6000    3912880
  */
 
-const zemen = require('../src/ conversion');
+import { describe, expect, it } from 'bun:test';
+import { Converter as zemen } from './_lib';
 
 
 const EthiopicDays = [
@@ -158,12 +159,12 @@ const GregorianDays = [
 ];
 
 
-function testToGregorian(testCaseIndex) {
+function testToGregorian(testCaseIndex: number) {
     const ecDate = EthiopicDays[testCaseIndex];
     const gcDate = GregorianDays[testCaseIndex];
 
     it(`should  convert ${ecDate} E.C to ${gcDate} G.C`, () => {
-        let query;
+        let query: number[];
         if (ecDate.length === 5) {
             query = [ecDate[1], ecDate[2], ecDate[3], ecDate[4]];
         } else {
@@ -175,7 +176,7 @@ function testToGregorian(testCaseIndex) {
     });
 }
 
-function testToEthiopian(testCaseIndex) {
+function testToEthiopian(testCaseIndex: number) {
     const gcDate = GregorianDays[testCaseIndex];
     const ecDate = EthiopicDays[testCaseIndex];
 

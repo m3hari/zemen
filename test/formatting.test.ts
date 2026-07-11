@@ -1,5 +1,5 @@
-const Zemen = require("../zemen");
-const Formatter = require("../src/formating");
+import { describe, expect, it } from "bun:test";
+import { Formatter, Zemen } from "./_lib";
 
 const zare = new Zemen("2009-12-27");
 const day2 = new Zemen("2009-1-1");

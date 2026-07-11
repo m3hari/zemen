@@ -1,6 +1,5 @@
-/* eslint no-new:0 */
-
-const Zemen = require("../zemen");
+import { describe, expect, it } from "bun:test";
+import { Zemen } from "./_lib";
 
 describe("Zemen Public API", () => {
   describe("Zemen Constructor", () => {
@@ -41,21 +40,21 @@ describe("Zemen Public API", () => {
     (() => {
       it("Should throw Invalid Argument Exception for  argumets length greater than 3", () => {
         expect(() => {
-          new Zemen(2009, 5, 15, 15);
+          new (Zemen as any)(2009, 5, 15, 15);
         }).toThrow();
       });
       it("Should throw Invalid Argument Exception for invalid argument type", () => {
         expect(() => {
-          new Zemen(null);
+          new (Zemen as any)(null);
         }).toThrow();
         expect(() => {
           new Zemen(undefined);
         }).toThrow();
         expect(() => {
-          new Zemen({});
+          new (Zemen as any)({});
         }).toThrow();
         expect(() => {
-          new Zemen(new Error("invalid"));
+          new (Zemen as any)(new Error("invalid"));
         }).toThrow();
         expect(() => {
           new Zemen(2009);
@@ -88,7 +87,7 @@ describe("Zemen Public API", () => {
     (() => {
       it("toEC() Should throw Invalid Argument Exception for  argumets length greater than 3", () => {
         expect(() => {
-          Zemen.toEC(2009, 5, 15, 15);
+          (Zemen as any).toEC(2009, 5, 15, 15);
         }).toThrow();
       });
     })();
@@ -96,13 +95,13 @@ describe("Zemen Public API", () => {
     (() => {
       it("toEC() Should throw Invalid Argument Exception for invalid argument type", () => {
         expect(() => {
-          Zemen.toEC(null);
+          (Zemen as any).toEC(null);
         }).toThrow();
         expect(() => {
           Zemen.toEC(undefined);
         }).toThrow();
         expect(() => {
-          Zemen.toEC({});
+          (Zemen as any).toEC({});
         }).toThrow();
       });
     })();
@@ -131,7 +130,7 @@ describe("Zemen Public API", () => {
     (() => {
       it("toGC() Should throw Invalid Argument Exception for  argumets length greater than 3", () => {
         expect(() => {
-          Zemen.toGC(2009, 5, 15, 15);
+          (Zemen as any).toGC(2009, 5, 15, 15);
         }).toThrow();
       });
     })();
@@ -139,13 +138,13 @@ describe("Zemen Public API", () => {
     (() => {
       it("toGC() Should throw Invalid Argument Exception for invalid argument type", () => {
         expect(() => {
-          Zemen.toGC(null);
+          (Zemen as any).toGC(null);
         }).toThrow();
         expect(() => {
           Zemen.toGC(undefined);
         }).toThrow();
         expect(() => {
-          Zemen.toGC({});
+          (Zemen as any).toGC({});
         }).toThrow();
       });
     })();
