@@ -1,71 +1,192 @@
 <!DOCTYPE html>
-<html lang="am">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zemen · ዘመን — Ethiopian calendar playground</title>
+  <title>ዘመን · zemen — Ethiopian calendar playground</title>
+  <meta name="description" content="Convert between Ethiopian and Gregorian dates and format them with Amharic month and weekday names — a playground for the zemen npm package.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "Noto Sans Ethiopic", "system-ui", "sans-serif"],
+            mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Ethiopic:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root { color-scheme: light dark; }
     body {
-      font-family: system-ui, "Noto Sans Ethiopic", sans-serif;
-      max-width: 40rem; margin: 3rem auto; padding: 0 1rem; line-height: 1.6;
+      background:
+        radial-gradient(60rem 30rem at 85% -10%, rgba(251, 191, 36, 0.07), transparent),
+        radial-gradient(40rem 24rem at 0% 110%, rgba(251, 191, 36, 0.04), transparent),
+        #09090b;
     }
-    h1 { font-size: 1.4rem; }
-    .today { text-align: center; color: #9451ec; font-size: 2.6rem; margin: 1.5rem 0; }
-    fieldset { border: 1px solid #8884; border-radius: 8px; margin-bottom: 1.2rem; }
-    legend { padding: 0 .5rem; font-weight: 600; }
-    input { font: inherit; padding: .35rem .5rem; border-radius: 6px; border: 1px solid #8886; }
-    output { display: block; margin-top: .5rem; font-size: 1.2rem; color: #9451ec; min-height: 1.6rem; }
-    code { background: #8882; padding: .1rem .35rem; border-radius: 4px; }
-    footer { margin-top: 2rem; font-size: .9rem; opacity: .75; }
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"] { -moz-appearance: textfield; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.6); }
   </style>
 </head>
-<body>
-  <h1>Zemen · ዘመን <small>— Ethiopian ⇆ Gregorian playground</small></h1>
-  <div class="today" id="zare-view">…</div>
+<body class="min-h-screen font-sans text-zinc-300 antialiased selection:bg-amber-400/30">
+  <main class="mx-auto max-w-3xl px-6 pb-20 pt-12">
 
-  <fieldset>
-    <legend>Gregorian → Ethiopian</legend>
-    <input type="date" id="gc-input">
-    <output id="gc-output"></output>
-  </fieldset>
+    <!-- header -->
+    <header class="flex items-center justify-between">
+      <div class="flex items-baseline gap-3">
+        <span class="text-2xl font-bold text-amber-300">ዘመን</span>
+        <span class="font-mono text-sm text-zinc-500">zemen</span>
+      </div>
+      <nav class="flex items-center gap-5 font-mono text-xs text-zinc-500">
+        <a class="transition hover:text-amber-300" href="https://www.npmjs.com/package/zemen">npm</a>
+        <a class="transition hover:text-amber-300" href="https://github.com/m3hari/zemen">GitHub</a>
+      </nav>
+    </header>
 
-  <fieldset>
-    <legend>Format today with a pattern</legend>
-    <input type="text" id="pattern-input" value="d ፣ MMMM DD ቀን YYYY E" size="28">
-    <output id="pattern-output"></output>
-    <small>tokens: <code>YYYY</code> <code>YY</code> <code>MM</code> <code>MMMM</code>
-      <code>DD</code> <code>DDD</code> <code>d</code> <code>e</code> <code>E</code></small>
-  </fieldset>
+    <!-- hero: today -->
+    <section class="mt-16 text-center">
+      <p class="font-mono text-xs uppercase tracking-[0.3em] text-zinc-500">ዛሬ · today</p>
+      <h1 id="hero-date" class="mt-4 text-5xl font-bold leading-tight text-zinc-100 sm:text-6xl">…</h1>
+      <p id="hero-sub" class="mt-3 text-lg text-amber-300/90"></p>
+      <p id="hero-gc" class="mt-1 font-mono text-sm text-zinc-500"></p>
+    </section>
 
-  <footer>
-    <a href="https://github.com/m3hari/zemen">GitHub</a> ·
-    <a href="https://www.npmjs.com/package/zemen">npm</a> ·
-    <code>bun add zemen</code>
-  </footer>
+    <!-- 13-month strip -->
+    <section class="mt-12 flex flex-wrap justify-center gap-1.5" id="month-strip" aria-label="the 13 Ethiopian months"></section>
+
+    <!-- converters -->
+    <section class="mt-14 grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+        <h2 class="font-mono text-xs uppercase tracking-widest text-zinc-500">Gregorian → Ethiopian</h2>
+        <input id="gc-input" type="date"
+          class="mt-4 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 font-mono text-sm text-zinc-200 outline-none transition focus:border-amber-400/60">
+        <p id="gc-out" class="mt-5 min-h-14 text-xl font-medium leading-snug text-zinc-100"></p>
+        <p id="gc-out-sub" class="font-mono text-xs text-zinc-500"></p>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+        <h2 class="font-mono text-xs uppercase tracking-widest text-zinc-500">Ethiopian → Gregorian</h2>
+        <div class="mt-4 flex gap-2">
+          <input id="ec-day" type="number" min="1" max="30" aria-label="day"
+            class="w-16 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-center font-mono text-sm text-zinc-200 outline-none transition focus:border-amber-400/60">
+          <select id="ec-month" aria-label="month"
+            class="min-w-0 flex-1 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-sm text-zinc-200 outline-none transition focus:border-amber-400/60"></select>
+          <input id="ec-year" type="number" aria-label="year"
+            class="w-20 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 text-center font-mono text-sm text-zinc-200 outline-none transition focus:border-amber-400/60">
+        </div>
+        <p id="ec-out" class="mt-5 min-h-14 text-xl font-medium leading-snug text-zinc-100"></p>
+        <p id="ec-out-sub" class="font-mono text-xs text-zinc-500"></p>
+      </div>
+    </section>
+
+    <!-- format playground -->
+    <section class="mt-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6">
+      <h2 class="font-mono text-xs uppercase tracking-widest text-zinc-500">Format playground</h2>
+      <input id="pattern" value="d ፣ MMMM DD ቀን YYYY E" spellcheck="false" aria-label="format pattern"
+        class="mt-4 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2.5 font-mono text-sm text-amber-200/90 outline-none transition focus:border-amber-400/60">
+      <div class="mt-3 flex flex-wrap gap-1.5" id="tokens"></div>
+      <p id="pattern-out" class="mt-6 text-center text-2xl font-medium text-zinc-100"></p>
+      <pre class="mt-6 overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 font-mono text-xs leading-relaxed text-zinc-400"><code id="code-out"></code></pre>
+    </section>
+
+    <!-- footer -->
+    <footer class="mt-16 flex flex-col items-center gap-3 text-center">
+      <code class="rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-2 font-mono text-sm text-amber-200/80">bun add zemen</code>
+      <p class="font-mono text-xs text-zinc-600">
+        MIT · <a class="transition hover:text-amber-300" href="http://www.geez.org/Calendars/">Beyene–Kudlek algorithm</a> · zero dependencies
+      </p>
+    </footer>
+  </main>
 
   <script type="module">
-    import Zemen from 'https://esm.sh/zemen';
+    import Zemen from "https://esm.sh/zemen";
 
     const $ = (id) => document.getElementById(id);
-    const zare = new Zemen();
-    $('zare-view').textContent = zare.format('d ፣ MMMM DD ቀን YYYY E');
+    const MONTHS = Array.from({ length: 13 }, (_, m) => new Zemen(2017, m, 10).getMonthName());
+    const today = new Zemen();
 
-    const convert = () => {
-      const v = $('gc-input').value;
+    // hero
+    $("hero-date").textContent = `${today.getMonthName()} ${today.getDate()}`;
+    $("hero-sub").textContent = today.format("d ፣ YYYY ዓ.ም");
+    $("hero-gc").textContent = new Date().toDateString();
+
+    // 13-month strip
+    MONTHS.forEach((name, m) => {
+      const chip = document.createElement("span");
+      chip.textContent = name;
+      chip.className =
+        m === today.getMonth()
+          ? "rounded-full border border-amber-400/50 bg-amber-400/10 px-3 py-1 text-xs text-amber-300"
+          : "rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-500";
+      $("month-strip").appendChild(chip);
+    });
+
+    // Gregorian → Ethiopian
+    const gcConvert = () => {
+      const v = $("gc-input").value;
       if (!v) return;
-      const [y, m, d] = v.split('-').map(Number);
-      const ec = Zemen.toEC(y, m - 1, d);
-      $('gc-output').value = `${ec.format('MMMM DD ቀን YYYY E')}  (${ec.toString()})`;
+      try {
+        const [y, m, d] = v.split("-").map(Number);
+        const ec = Zemen.toEC(y, m - 1, d);
+        $("gc-out").textContent = ec.format("d ፣ MMMM DD ቀን YYYY E");
+        $("gc-out-sub").textContent = ec.toString();
+      } catch (err) {
+        $("gc-out").textContent = "—";
+        $("gc-out-sub").textContent = err.message;
+      }
     };
-    $('gc-input').value = new Date().toISOString().slice(0, 10);
-    $('gc-input').addEventListener('input', convert);
-    convert();
+    $("gc-input").value = new Date().toLocaleDateString("en-CA");
+    $("gc-input").addEventListener("input", gcConvert);
+    gcConvert();
 
-    const reformat = () => {
-      $('pattern-output').value = zare.format($('pattern-input').value || undefined);
+    // Ethiopian → Gregorian
+    MONTHS.forEach((name, m) => $("ec-month").add(new Option(name, m)));
+    const ecConvert = () => {
+      try {
+        const gc = Zemen.toGC(+$("ec-year").value, +$("ec-month").value, +$("ec-day").value);
+        $("ec-out").textContent = gc.toDateString();
+        $("ec-out-sub").textContent = gc.toLocaleDateString("en-CA");
+      } catch (err) {
+        $("ec-out").textContent = "—";
+        $("ec-out-sub").textContent = err.message;
+      }
     };
-    $('pattern-input').addEventListener('input', reformat);
+    $("ec-year").value = today.getFullYear();
+    $("ec-month").value = today.getMonth();
+    $("ec-day").value = today.getDate();
+    for (const id of ["ec-year", "ec-month", "ec-day"]) $(id).addEventListener("input", ecConvert);
+    ecConvert();
+
+    // format playground
+    const reformat = () => {
+      const p = $("pattern").value;
+      let out;
+      try {
+        out = p ? today.format(p) : today.format();
+      } catch (err) {
+        out = err.message;
+      }
+      $("pattern-out").textContent = out;
+      $("code-out").textContent =
+        `import Zemen from 'zemen';\n\nnew Zemen().format('${p.replaceAll("'", "\\'")}');\n// → '${out}'`;
+    };
+    for (const t of ["YYYY", "YY", "MMMM", "MMM", "MM", "DD", "DDD", "d", "e", "E"]) {
+      const b = document.createElement("button");
+      b.textContent = t;
+      b.className =
+        "rounded-md border border-zinc-800 px-2 py-0.5 font-mono text-xs text-zinc-500 transition hover:border-amber-400/50 hover:text-amber-300";
+      b.addEventListener("click", () => {
+        $("pattern").value += ($("pattern").value ? " " : "") + t;
+        reformat();
+      });
+      $("tokens").appendChild(b);
+    }
+    $("pattern").addEventListener("input", reformat);
     reformat();
   </script>
 </body>
