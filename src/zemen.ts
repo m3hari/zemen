@@ -54,8 +54,9 @@ export class Zemen {
     } else {
       throw new Error("Invalid Argument Exception");
     }
-    // new Date(y, …) maps years 0-99 into 1900-1999.
-    return new Date(g[0], g[1] - 1, g[2]);
+    const date = new Date(g[0], g[1] - 1, g[2]);
+    date.setFullYear(g[0]); // new Date(y, …) would map years 0-99 into 1900-1999
+    return date;
   }
 
   /** Gregorian → Ethiopian: accepts `(dateString)`, `(date)`, or `(year, month, day)`. */
