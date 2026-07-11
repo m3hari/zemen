@@ -25,7 +25,7 @@
   "scripts": {
     "dev": "npx rimraf dist && npx webpack  --mode development",
     "lint": "npx eslint --fix .",
-    "test": "npx jest --verbose --coverage",
+    "test": "bun test",
     "build": "npx rimraf dist && npx webpack --progress --mode production --output ./dist/zemen.min.js",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
