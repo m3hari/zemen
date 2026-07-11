@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # two timezones so behavioral parity is never TZ-lucky
+        tz: [UTC, America/New_York]
+    env:
+      TZ: ${{ matrix.tz }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun test --coverage
+      - run: bun run build
+      # independent parity proof against a fresh registry download of 0.0.7
+      - run: bun run verify
