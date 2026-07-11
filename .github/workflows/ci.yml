@@ -4,6 +4,7 @@ on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch: # manual run additionally publishes to npm
 
 jobs:
   test:
@@ -19,7 +20,27 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run typecheck
-      - run: bun test --coverage
-      - run: bun run build
-      # independent parity proof against a fresh registry download of 0.0.7
+      - run: bun test
+      # live parity proof vs a fresh registry download of zemen@0.0.7,
+      # plus the dual-package contract on the real tarball
       - run: bun run verify
+
+  publish:
+    if: github.event_name == 'workflow_dispatch'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm --provenance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: bun install --frozen-lockfile
+      # prepublishOnly runs typecheck + tests + build
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
