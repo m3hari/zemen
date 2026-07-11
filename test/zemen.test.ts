@@ -33,10 +33,10 @@ describe("Zemen constructor", () => {
       () => new (Zemen as any)(2009, 5),
       () => new (Zemen as any)(2009, 5, 15, 15),
       () => new (Zemen as any)(null),
-      () => new Zemen(undefined),
+      () => new (Zemen as any)(undefined),
       () => new (Zemen as any)({}),
       () => new (Zemen as any)(new Error("x")),
-      () => new Zemen(2009),
+      () => new (Zemen as any)(2009),
       () => new (Zemen as any)(true),
     ]) {
       expect(call).toThrow("Invalid Argument Exception");
@@ -108,8 +108,8 @@ describe("Zemen.parse", () => {
   });
 
   it("throws ParsingError for falsy input (B8)", () => {
-    expect(() => Zemen.parse()).toThrow("ParsingError: Can't parse ");
-    expect(() => Zemen.parse(null)).toThrow("ParsingError: Can't parse ");
+    expect(() => (Zemen as any).parse()).toThrow("ParsingError: Can't parse ");
+    expect(() => (Zemen as any).parse(null)).toThrow("ParsingError: Can't parse ");
     expect(() => Zemen.parse("")).toThrow("ParsingError: Can't parse ");
   });
 
@@ -149,7 +149,7 @@ describe("names & weekdays", () => {
   });
 });
 
-describe("known quirks", () => {
+describe("regression fixes (0.0.9)", () => {
   it("new Zemen(dateObject) delegates to Zemen.toEC (B6)", () => {
     expect(new Zemen(new Date(2017, 8, 2)).toString()).toBe("2009-12-27");
     expect(new Zemen(new Date(2023, 11, 25)).toString()).toBe("2016-4-15"); // December works now
