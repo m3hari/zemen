@@ -1,24 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="am">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Play Zemen</title>
-    <script src="./dist/zemen.min.js"></script>
-    <style>
-        .today{
-            text-align: center;
-            color:#9451ec;
-            font-size: 80px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zemen · ዘመን — Ethiopian calendar playground</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, "Noto Sans Ethiopic", sans-serif;
+      max-width: 40rem; margin: 3rem auto; padding: 0 1rem; line-height: 1.6;
+    }
+    h1 { font-size: 1.4rem; }
+    .today { text-align: center; color: #9451ec; font-size: 2.6rem; margin: 1.5rem 0; }
+    fieldset { border: 1px solid #8884; border-radius: 8px; margin-bottom: 1.2rem; }
+    legend { padding: 0 .5rem; font-weight: 600; }
+    input { font: inherit; padding: .35rem .5rem; border-radius: 6px; border: 1px solid #8886; }
+    output { display: block; margin-top: .5rem; font-size: 1.2rem; color: #9451ec; min-height: 1.6rem; }
+    code { background: #8882; padding: .1rem .35rem; border-radius: 4px; }
+    footer { margin-top: 2rem; font-size: .9rem; opacity: .75; }
+  </style>
 </head>
 <body>
-    <h1 class="today" id="zare-view"></h1>
-    <script>
-        var zare = new Zemen();    
-        document.getElementById('zare-view').innerHTML = zare.format('d,MMM DD YYYY E');
-    </script>
+  <h1>Zemen · ዘመን <small>— Ethiopian ⇆ Gregorian playground</small></h1>
+  <div class="today" id="zare-view">…</div>
+
+  <fieldset>
+    <legend>Gregorian → Ethiopian</legend>
+    <input type="date" id="gc-input">
+    <output id="gc-output"></output>
+  </fieldset>
+
+  <fieldset>
+    <legend>Format today with a pattern</legend>
+    <input type="text" id="pattern-input" value="d ፣ MMMM DD ቀን YYYY E" size="28">
+    <output id="pattern-output"></output>
+    <small>tokens: <code>YYYY</code> <code>YY</code> <code>MM</code> <code>MMMM</code>
+      <code>DD</code> <code>DDD</code> <code>d</code> <code>e</code> <code>E</code></small>
+  </fieldset>
+
+  <footer>
+    <a href="https://github.com/m3hari/zemen">GitHub</a> ·
+    <a href="https://www.npmjs.com/package/zemen">npm</a> ·
+    <code>bun add zemen</code>
+  </footer>
+
+  <script type="module">
+    import Zemen from 'https://esm.sh/zemen';
+
+    const $ = (id) => document.getElementById(id);
+    const zare = new Zemen();
+    $('zare-view').textContent = zare.format('d ፣ MMMM DD ቀን YYYY E');
+
+    const convert = () => {
+      const v = $('gc-input').value;
+      if (!v) return;
+      const [y, m, d] = v.split('-').map(Number);
+      const ec = Zemen.toEC(y, m - 1, d);
+      $('gc-output').value = `${ec.format('MMMM DD ቀን YYYY E')}  (${ec.toString()})`;
+    };
+    $('gc-input').value = new Date().toISOString().slice(0, 10);
+    $('gc-input').addEventListener('input', convert);
+    convert();
+
+    const reformat = () => {
+      $('pattern-output').value = zare.format($('pattern-input').value || undefined);
+    };
+    $('pattern-input').addEventListener('input', reformat);
+    reformat();
+  </script>
 </body>
 </html>
