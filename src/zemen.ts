@@ -9,11 +9,11 @@ export type ZemenDateValue = string | number | Date | Zemen;
  * (0 = መስከረም … 12 = ጳጉሜን), matching `Date#getMonth`.
  */
 export class Zemen {
-  year: number;
-  month: number;
-  date: number;
+  readonly year: number;
+  readonly month: number;
+  readonly date: number;
   /** Gregorian equivalent; backs the weekday queries. */
-  gc: Date;
+  readonly gc: Date;
 
   constructor(val?: ZemenDateValue, month?: number | string, day?: number | string) {
     if (arguments.length === 0) {
@@ -45,7 +45,7 @@ export class Zemen {
   }
 
   /** Ethiopian → Gregorian: accepts `('y-m-d')`, `(zemen)`, or `(year, month, day)`. */
-  static toGC(val?: ZemenDateValue, month?: number, day?: number): Date {
+  static toGC(val: ZemenDateValue, month?: number, day?: number): Date {
     let g: Ymd;
     if (arguments.length === 3) {
       g = toGregorian(val as number, (month as number) + 1, day as number);
@@ -62,7 +62,7 @@ export class Zemen {
   }
 
   /** Gregorian → Ethiopian: accepts `(dateString)`, `(date)`, or `(year, month, day)`. */
-  static toEC(val?: ZemenDateValue, month?: number, day?: number): Zemen {
+  static toEC(val: ZemenDateValue, month?: number, day?: number): Zemen {
     let e: Ymd;
     if (arguments.length === 3) {
       e = toEthiopic(val as number, (month as number) + 1, day as number);

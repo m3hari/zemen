@@ -17,8 +17,8 @@ const floorDiv = (a: number, b: number): number => Math.floor(a / b);
 const isGregorianLeap = (year: number): boolean =>
   year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
 
-/** Days per Gregorian month, 1-indexed; February is patched per leap year. */
-const MONTH_DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+/** Days per Gregorian month, 1-indexed; February resolved per leap year at use. */
+const MONTH_DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] as const;
 
 export type Ymd = [year: number, month: number, day: number];
 
@@ -52,6 +52,7 @@ function gregorianToJdn(year: number, month: number, day: number): number {
   );
 }
 
+// Cycle lengths in days: 1461 = 4 years, 36524 = 100, 146097 = 400, 730485 = 2000.
 function jdnToGregorian(jdn: number): Ymd {
   const r2000 = (jdn - GREGORIAN_EPOCH) % 730485;
   const r400 = (jdn - GREGORIAN_EPOCH) % 146097;
@@ -73,14 +74,13 @@ function jdnToGregorian(jdn: number): Ymd {
     return [year, 12, 31];
   }
   let day = n;
-  const monthDays = [...MONTH_DAYS];
-  monthDays[2] = isGregorianLeap(year) ? 29 : 28;
   for (let m = 1; m <= 12; m += 1) {
-    if (n <= monthDays[m]!) {
+    const daysInMonth = m === 2 && isGregorianLeap(year) ? 29 : MONTH_DAYS[m]!;
+    if (n <= daysInMonth) {
       day = n;
       break;
     }
-    n -= monthDays[m]!;
+    n -= daysInMonth;
   }
   return [year, month, day];
 }
