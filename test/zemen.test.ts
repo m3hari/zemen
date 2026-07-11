@@ -57,10 +57,11 @@ describe("Zemen.toEC (Gregorian → Ethiopian)", () => {
     expect(Zemen.toEC(new Date(2017, 8, 2)).toString()).toBe("2009-12-27");
   });
 
-  it("string input uses native Date parsing (so it is timezone-sensitive)", () => {
-    // the string path and the Date path share the same native parse
-    expect(Zemen.toEC("2017-09-02").toString())
-      .toBe(Zemen.toEC(new Date("2017-09-02")).toString());
+  it("date-only ISO strings are timezone-stable (B9)", () => {
+    expect(Zemen.toEC("2017-09-02").toString()).toBe("2009-12-27"); // same in every TZ
+    expect(Zemen.toEC("2017-09-02").toString()).toBe(Zemen.toEC(2017, 8, 2).toString());
+    expect(() => Zemen.toEC("2023-02-30")).toThrow("Invalid Gregorian Date"); // no Date rollover
+    expect(() => Zemen.toEC("not a date")).toThrow("Invalid Gregorian Date");
   });
 
   it("throws 'Invalid Argument Exception' for wrong arity or type", () => {

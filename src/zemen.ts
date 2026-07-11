@@ -65,8 +65,16 @@ export class Zemen {
     if (arguments.length === 3) {
       e = toEthiopic(val as number, (month as number) + 1, day as number);
     } else if (arguments.length === 1 && typeof val === "string") {
-      const gc = new Date(val);
-      e = toEthiopic(gc.getFullYear(), gc.getMonth() + 1, gc.getDate());
+      // Native parsing treats date-only ISO strings as UTC midnight, which
+      // shifts the day in negative-UTC timezones; read them as plain calendar
+      // dates instead (and let validation see the raw components).
+      const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(val);
+      if (iso) {
+        e = toEthiopic(+iso[1]!, +iso[2]!, +iso[3]!);
+      } else {
+        const gc = new Date(val);
+        e = toEthiopic(gc.getFullYear(), gc.getMonth() + 1, gc.getDate());
+      }
     } else if (arguments.length === 1 && val instanceof Date) {
       e = toEthiopic(val.getFullYear(), val.getMonth() + 1, val.getDate());
     } else {
