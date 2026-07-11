@@ -43,8 +43,8 @@ describe("Zemen constructor", () => {
     }
   });
 
-  it("empty string dies in parse with a TypeError (known quirk)", () => {
-    expect(() => new Zemen("")).toThrow(TypeError);
+  it("empty string throws ParsingError, not a TypeError (B8)", () => {
+    expect(() => new Zemen("")).toThrow("ParsingError: Can't parse ");
   });
 });
 
@@ -106,10 +106,10 @@ describe("Zemen.parse", () => {
     expect(Zemen.parse("007-08-09").toString()).toBe("7-8-9");
   });
 
-  it("returns '' for falsy input (known quirk)", () => {
-    expect(Zemen.parse() as unknown as string).toBe("");
-    expect(Zemen.parse(null) as unknown as string).toBe("");
-    expect(Zemen.parse(undefined) as unknown as string).toBe("");
+  it("throws ParsingError for falsy input (B8)", () => {
+    expect(() => Zemen.parse()).toThrow("ParsingError: Can't parse ");
+    expect(() => Zemen.parse(null)).toThrow("ParsingError: Can't parse ");
+    expect(() => Zemen.parse("")).toThrow("ParsingError: Can't parse ");
   });
 
   it("throws ParsingError for malformed strings", () => {

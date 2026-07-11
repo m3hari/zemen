@@ -78,8 +78,7 @@ export class Zemen {
   /** Parse an Ethiopian `'y-m-d'` string. */
   static parse(dateString?: string | null, pattern?: string): Zemen {
     if (!dateString) {
-      // Known quirk: falsy input yields '' rather than a Zemen or an error.
-      return "" as unknown as Zemen;
+      throw new Error(`ParsingError: Can't parse ${dateString}`);
     }
     if (pattern) {
       throw new Error("Not implemented Exception :(");
